@@ -1,0 +1,56 @@
+<!-- public/views/nerd.html -->
+
+<div class="jumbotron text-center">
+    <h1>{{player.username}}</h1>
+	
+	<h2>Latest Stats</h2>
+	
+	<!--button ng-if="sessionbutton" ng-click="pull()">Pull Stats</button-->
+    <table class="table">
+		<thead>
+			<tr>
+				<th>Tank</th>
+				<th>Battles</th>
+				<th>Average Experience</th>
+				<th>DPG</th>
+				<th>Battles This Season</a></th>
+				<th>Battles Required for Session Pull</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="text-left" ng:repeat="(tank,stats) in player.latest_stats">
+				<td><img ng-src="{{tank | tankimage}}" alt="Description" />{{tank | tankname}}</td>
+				<td>{{stats.battles}}</td>
+				<td>{{stats.battle_avg_xp}}</td>
+				<td>{{stats.dpg}}</td>
+				<td>{{stats.seasonBattles}}</td>
+				<td>{{stats.neededBattles}}</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<h2>Sessions in Tanks</h2>
+	
+	<table ng-show="!(player.session_data).length" class="table" ng:repeat="(tank,stats) in player.session_data">
+		<thead>
+			<tr class="text-left" ng:repeat="(sessionnum, session) in stats">
+				<td ng-show="sessionnum == 0"><h3><img ng-src="{{session.tankid | tankimage}}" alt="Description" />{{session.tankid | tankname}}</h3></td>
+			</tr>
+			<tr>
+				<th>Session #</th>
+				<th>Battles</th>
+				<th>Average Experience</th>
+				<th>DPG</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="text-left" ng:repeat="(sessionnum, session) in stats">
+				<td>{{sessionnum | sessionnumber}}</td>
+				<td>{{session.battles}}</td>
+				<td>{{session.epg}}</td>
+				<td>{{session.dpg}}</td>
+
+			</tr>
+		</tbody>
+	</table>
+</div>
