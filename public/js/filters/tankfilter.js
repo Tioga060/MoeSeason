@@ -44,11 +44,11 @@ angular.module('TankFilter', [])
 			if( !(tankid in data) ) {
 				if( !(tankid in serviceInvoked) ) {
 					serviceInvoked[tankid] = true;
-					console.log("attempting to get "+tankid);
+					//console.log("attempting to get "+tankid);
 					// CALL THE SERVICE THAT FETCHES THE DATA HERE
 					Tank.getTank(tankid).then(function(result) {
 						var img = result['images']['small_icon'];
-						console.log("got image" + img);
+						//console.log("got image" + img);
 						data[tankid] = img;//${name}
 					});
 				}

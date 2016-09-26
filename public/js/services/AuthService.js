@@ -13,8 +13,8 @@ angular.module('AuthService', []).service('Auth',['$http','$q', function($http,$
 			  if(res.data){
 				  me.currentUser = res.data;
 				  // call the callback with the retrieved user
-				  console.log("found him");
-				  console.log(res.data);
+				  //console.log("found him");
+				  //console.log(res.data);
 				  me.currentUser["profile"] = "/player/" +me.currentUser["playerid"];
 				  me.currentUser["loggedin"] = true;
 				  callback(me.currentUser);

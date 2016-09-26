@@ -28,9 +28,10 @@ exports.getPlayerInfo = function(url){
 }
 
 function updateSessionData(data, callback){
+	//console.log("Final player data");
 	Player.update({'playerid': data.playerid},{ $set: { 'latest_stats': data.latest_stats, 'session_data':data.session_data, 'top_sessions': data.top_sessions}},function (err, newdata) {
 		if (err) return handleError(err);
-		console.log(newdata);
+		//console.log(newdata);
 		callback(null, data);
 	});
 }
@@ -40,7 +41,7 @@ exports.updateSession= function(playerid, cb){
 		if (err)
 			res.send(err);
 		//Return Player
-		console.log("Player gotten "+person.playerid);
+		//console.log("Player gotten "+person.playerid);
 		person.getSession(function(err, data){
 			updateSessionData(data,cb);
 		});
@@ -53,9 +54,9 @@ function updateAll(){
 		function throughPlayers () {           //  create a loop function
 			setTimeout(function () {    //  call a 3s setTimeout when the loop is called
 				person = players[i];
-				console.log("Player gotten "+person.playerid);
+				//console.log("Player gotten "+person.playerid);
 				person.getSession(function(err, data){
-					updateSessionData(data,cb);
+					updateSessionData(data,function(err, res){});
 				});
 
 				i++;                     //  increment the counter
@@ -69,10 +70,10 @@ function updateAll(){
 	});
 }
 
-/*cron.scheduleJob('0 0,15,30,45 * * * *', function(){
-    console.log('Running session pull');
+cron.scheduleJob('0 0,15,30,45 * * * *', function(){
+    //console.log('Running session pull');
 	updateAll();
-});*/
+});
 
 function compareByStat(stat){
 	return function compare(a,b) {
@@ -111,7 +112,7 @@ exports.rankAll = rankSessions;
 
 function addClan(tag, server, cb){
 	wgapi.getClanId(tag, server, function(err, clanid){
-		console.log("got clan id "+clanid);
+		//console.log("got clan id "+clanid);
 		wgapi.getClanPlayers(clanid, server, function(err, players){
 			var i = 0; 
 			function throughPlayers () {           //  create a loop function
@@ -119,9 +120,9 @@ function addClan(tag, server, cb){
 					person = players[i];
 					var info = {'playerid':person.account_id, 'username':person.account_name, 'server':server};
 					var cookie = {key:'',sig:''};
-					console.log("Player gotten "+person.playerid);
+					//console.log("Player gotten "+person.playerid);
 					addUpdatePlayer(info, cookie, function(err, res){
-						console.log("player added "+person.account_name);
+						//console.log("player added "+person.account_name);
 					});
 
 					i++;                     //  increment the counter

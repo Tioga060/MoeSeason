@@ -11,7 +11,7 @@ module.exports = function(app) {
 	// middleware to use for all requests
 	router.use(function(req, res, next) {
 		// do logging
-		console.log('Something is happening.');
+		//console.log('Something is happening.');
 		next(); // make sure we go to the next routes and don't stop here
 	});
 
@@ -28,7 +28,7 @@ module.exports = function(app) {
 		/*.post(function(req, res) {
 			
 			var player = new Player();      // create a new instance of the Bear model
-			console.log("Got username: "+req.body.username);
+			//console.log("Got username: "+req.body.username);
 			player.username = req.body.username;  // set the bears name (comes from the request)
 			player.playerid = req.body.playerid;
 			player.server = req.body.server;
@@ -55,7 +55,7 @@ module.exports = function(app) {
 			if (err)
 				res.send(err);
 			//Return Player
-			console.log("Player gotten "+req.params.playerid);
+			//console.log("Player gotten "+req.params.playerid);
 			res.json(person);
 		});
     });
@@ -91,7 +91,7 @@ module.exports = function(app) {
 					res.send(false);
 				//Return Player
 				else{
-					console.log("Player gotten by cookie");
+					//console.log("Player gotten by cookie");
 					res.json(person);
 				}
 			});

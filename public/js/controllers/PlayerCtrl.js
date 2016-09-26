@@ -1,7 +1,7 @@
 // public/js/controllers/PlayerCtrl.js
 
 
-angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$routeParams', 'Player','Auth', function($scope, $routeParams, Player, Auth) {
+angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$routeParams', 'Player','Auth','Tank', function($scope, $routeParams, Player, Auth, Tank) {
 	
 	Auth.getUser(function(user){$scope.currentUser = user;});
 	if($scope.currentUser){if($scope.currentUser["playerid"] == $routeParams.playerid) {$scope.sessionbutton = true;} else {$scope.sessionbutton = false;}}
@@ -22,8 +22,31 @@ angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$rout
 			}
 		});
 		data['session_data'] = sessionData;*/
-		//console.log(sessionData);
-		$scope.player = data;
+		////console.log(sessionData);
+		Tank.getRules().then(function(rules){
+			$scope.rules = rules;
+			
+			for(tank in data.session_data){
+				for (var i = 0; i < data.session_data[tank].length; i++)
+				{
+					if(i < rules.sessionsRequired){
+						data.session_data[tank][i].isTop = true;
+					}
+					else{
+						data.session_data[tank][i].isTop = false;
+					}
+				}
+				data.session_data[tank].sort(function(a,b){
+				  // Turn your strings into dates, and then subtract them
+				  // to get a value that is either negative, positive, or zero.
+				  return new Date(a.date) - new Date(b.date);
+				});
+			}
+			console.log("got data");
+			console.log(data);
+			$scope.player = data;
+		});
+		
 		
     });
 	$scope.pull = function(){

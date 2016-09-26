@@ -42,15 +42,16 @@
 					<th class="col-md-1">Battles</th>
 					<th class="col-md-2">Average Experience</th>
 					<th class="col-md-2">DPG</th>
+					<th class="col-md-2">Pull Time</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr class="text-left" ng:repeat="(sessionnum, session) in stats">
+				<tr class="text-left" ng:repeat="(sessionnum, session) in stats" ng-class="{success: session.isTop}">
 					<td>{{sessionnum | sessionnumber}}</td>
 					<td>{{session.battles}}</td>
 					<td>{{session.epg}}</td>
 					<td>{{session.dpg}}</td>
-
+					<td>{{session.date | date:'MMM-d h:m a'}}</td>
 				</tr>
 			</tbody>
 		</table>

@@ -35,12 +35,12 @@ module.exports = function(app) {
 		passport.authenticate('openid',{successRedirect: '/success',failureRedirect: '/error'}), 
 		function(req, res) {
 			//res.sendfile('./public/views/player.html');
-			console.log("neat");
+			//console.log("neat");
 		}
 	);
 	
 	app.get('/success', function(req, res, next) {
-		console.log(req.cookies);
+		//console.log(req.cookies);
 		DB.insertAndGet(DB.getPlayerInfo(req.user),req.cookies, function(err, result){});
 		next();
 		res.redirect('/');
@@ -68,10 +68,10 @@ module.exports = function(app) {
 	app.get('/', function(req, res) {
 		res.sendfile('./public/index.html'); // load our public/index.html file
 		/*if(req.user){
-			console.log("this is what i got for you");
+			//console.log("this is what i got for you");
 			DB.insertAndGet(DB.getPlayerInfo(req.user),req.cookies, function(err, result){
 				req.user = (result);
-				console.log(req.user);
+				//console.log(req.user);
 			});
 		}*/
 	});
@@ -92,10 +92,10 @@ module.exports = function(app) {
 	app.get('/:test', function(req, res) {
 		res.sendfile('./public/index.html'); // load our public/index.html file
 		/*if(req.user){
-			console.log("this is what i got for you");
+			//console.log("this is what i got for you");
 			DB.insertAndGet(DB.getPlayerInfo(req.user),req.cookies, function(err, result){
 				req.user = (result);
-				console.log(req.user);
+				//console.log(req.user);
 			});
 		}*/
 	});

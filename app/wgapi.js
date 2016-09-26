@@ -14,8 +14,8 @@ var fetch = function(file,cb){
 
 var getJSON = function (body,cb){
 	var data = JSON.parse(body);
-	console.log("Got this player");
-	console.log(data);
+	//console.log("Got this player");
+	//console.log(data);
 	cb(null,data);
 };
 
@@ -65,8 +65,8 @@ function waterfallGeneric(url, funcs){
 	funcs = funcs || [];
 	async.waterfall(([
 			function dummy(callback) {
-				console.log("Calling URL");
-				console.log(url);
+				//console.log("Calling URL");
+				//console.log(url);
 				callback(null, url);
 			},
 			fetch,
@@ -82,8 +82,8 @@ function waterfallGenericCB(url, funcs, cb){
 	funcs = funcs || [];
 	async.waterfall(([
 			function dummy(callback) {
-				console.log("Calling URL");
-				console.log(url);
+				//console.log("Calling URL");
+				//console.log(url);
 				callback(null, url);
 			},
 			fetch,

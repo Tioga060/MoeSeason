@@ -54,8 +54,8 @@ function averageBestSessions(player){
 		}
 		
 	}
-	console.log("player's best stats");
-	console.log(player.bests);
+	//console.log("player's best stats");
+	//console.log(player.bests);
 	return player.bests;
 }
 
@@ -95,11 +95,11 @@ exports.getSessionStats = function(player,stats,cb){
 			var tankid = tank["tank_id"];
 			
 			var deltaBattles = parseInt(tank["all"]["battles"]);
-			console.log("total battles for $s is $s", tankid, tank["all"]["battles"]);
+			//console.log("total battles for $s is $s", tankid, tank["all"]["battles"]);
 			deltaBattles -= player.latest_stats[tankid]["battles"]+(variables.sessionMin-player.latest_stats[tankid]["neededBattles"]);
-			console.log("delta battles for %s is %s", tankid ,deltaBattles);
+			//console.log("delta battles for %s is %s", tankid ,deltaBattles);
 			if((player.latest_stats[tankid]["neededBattles"] - deltaBattles) <=0){
-				console.log("we have enough battles for a session pull on "+tankid);
+				//console.log("we have enough battles for a session pull on "+tankid);
 				for (var key in tank["all"]) {
 					tank["all"][key] = parseInt(tank["all"][key]);
 					tank["all"][key] -= player.latest_stats[tankid][key];
@@ -139,7 +139,7 @@ exports.getSessionStats = function(player,stats,cb){
 				}
 				
 				//If we have enough sessions for the tank and we've got a new valid top session
-				if((poppos != -1) && (player.session_data[tankid].length>variables.sessionsRequired) && (poppos<variables.sessionsRequired)){
+				if((poppos != -1) && (player.session_data[tankid].length>=variables.sessionsRequired) && (poppos<variables.sessionsRequired)){
 					if(!player.top_sessions){player.top_sessions = {};}
 					player.top_sessions[tankid] = averageBestSessionsForTank(player, tankid);
 				}
@@ -149,7 +149,7 @@ exports.getSessionStats = function(player,stats,cb){
 				
 			}
 			else{
-				console.log("not enough battles for a session pull on "+tankid);
+				//console.log("not enough battles for a session pull on "+tankid);
 				player.latest_stats[tankid]["neededBattles"] -= deltaBattles;
 			}
 		});

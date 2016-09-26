@@ -12,6 +12,6 @@ angular.module('MainCtrl', []).controller('MainController', ['$scope', 'Auth', f
         });
     }, 1000);*/
 	$scope.$watch('currentUser',function(){
-		console.log("user changed");
+		//console.log("user changed");
 	});
 }]);

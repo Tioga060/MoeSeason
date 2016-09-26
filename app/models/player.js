@@ -32,7 +32,7 @@ var playerSchema = new Schema({
   // if created_at doesn't exist, add to that field
   if (!this.created_at)
 	this.created_at = currentDate;
-  console.log("Ready to save");
+  //console.log("Ready to save");
   next();
 });*/
 
@@ -42,13 +42,13 @@ playerSchema.methods.setStartingStats = function() {
 	var updateStarting = function(stats, cb){
 		_this.starting_stats = stats;
 		_this.latest_stats = stats;
-		console.log("Got final stats");
-		console.log(_this.latest_stats);
+		//console.log("Got final stats");
+		//console.log(_this.latest_stats);
 		_this.save(function(err) {
 		  if (err) { 
 				handleError(res, err);
 			}
-		  console.log('User saved successfully!');
+		  //console.log('User saved successfully!');
 		});
 
 		cb(null,1);
@@ -59,12 +59,12 @@ playerSchema.methods.setStartingStats = function() {
 playerSchema.methods.getSession = function(callback) {
 	
 	var _this = this;
-	var updateSessions = function(sessionData, overall,top_sessions, cb){
-		_this.session_data = sessionData;
+	var updateSessions = function(data, cb){
+		_this.session_data = data.session_data;
 
-		_this.latest_stats = overall;
+		_this.latest_stats = data.latest_stats;
 
-		_this.top_sessions = overall;
+		_this.top_sessions = data.top_sessions;
 		callback(null, _this);
 	}
 	wgapi.useTankStats(this.playerid, this.server, variables.tankIDs, [async.apply(statsFuncs.getSessionStats,_this),updateSessions]);
