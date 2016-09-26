@@ -31,26 +31,28 @@
 	
 	<h2>Sessions in Tanks</h2>
 	
-	<table ng-show="!(player.session_data).length" class="table" ng:repeat="(tank,stats) in player.session_data">
-		<thead>
-			<tr class="text-left" ng:repeat="(sessionnum, session) in stats">
-				<td ng-show="sessionnum == 0"><h3><img ng-src="{{session.tankid | tankimage}}" alt="Description" />{{session.tankid | tankname}}</h3></td>
-			</tr>
-			<tr>
-				<th>Session #</th>
-				<th>Battles</th>
-				<th>Average Experience</th>
-				<th>DPG</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr class="text-left" ng:repeat="(sessionnum, session) in stats">
-				<td>{{sessionnum | sessionnumber}}</td>
-				<td>{{session.battles}}</td>
-				<td>{{session.epg}}</td>
-				<td>{{session.dpg}}</td>
+	<div ng-show="!(player.session_data).length" ng:repeat="(tank,stats) in player.session_data">
+		<div class="container-fluid" ng:repeat="(sessionnum, session) in stats">
+			<h3 class="text-left" ng-show="sessionnum == 0"><img ng-src="{{session.tankid | tankimage}}" alt="Description" />{{session.tankid | tankname}}</h3>
+		</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th class="col-md-1">Session #</th>
+					<th class="col-md-1">Battles</th>
+					<th class="col-md-2">Average Experience</th>
+					<th class="col-md-2">DPG</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="text-left" ng:repeat="(sessionnum, session) in stats">
+					<td>{{sessionnum | sessionnumber}}</td>
+					<td>{{session.battles}}</td>
+					<td>{{session.epg}}</td>
+					<td>{{session.dpg}}</td>
 
-			</tr>
-		</tbody>
-	</table>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>

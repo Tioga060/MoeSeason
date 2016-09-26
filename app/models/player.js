@@ -16,7 +16,7 @@ var playerSchema = new Schema({
   latest_stats: {},
   cookie: {},
   session_data: {type: {}, default: false},
-  sessions: Array,
+  top_sessions: {type: {}, default: false},
   awards: [],
   created_at: {type: Date,default: new Date()},
   updated_at: Date
@@ -59,14 +59,15 @@ playerSchema.methods.setStartingStats = function() {
 playerSchema.methods.getSession = function(callback) {
 	
 	var _this = this;
-	var updateSessions = function(stats, overall, cb){
-		if(Object.keys(stats).length){_this.sessions.push(stats);}
+	var updateSessions = function(sessionData, overall,top_sessions, cb){
+		_this.session_data = sessionData;
 
 		_this.latest_stats = overall;
 
+		_this.top_sessions = overall;
 		callback(null, _this);
 	}
-	wgapi.useTankStats(this.playerid, this.server, variables.tankIDs, [async.apply(statsFuncs.getSessionStats,_this.latest_stats),updateSessions]);
+	wgapi.useTankStats(this.playerid, this.server, variables.tankIDs, [async.apply(statsFuncs.getSessionStats,_this),updateSessions]);
 	
 }
 

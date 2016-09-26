@@ -2,8 +2,6 @@ require('dotenv').config()
 var request = require('request');
 var async = require('async');
 
-
-
 var fetch = function(file,cb){
      request.get(file, function(err,response,body){
            if ( err){
@@ -42,6 +40,25 @@ exports.getTankInfo = function (tankid, callback){
 		cb(null,extracted);
 	}
 	waterfallGenericCB(url,[extractName],callback);
+}
+
+exports.getClanId = function (tag, server, callback){
+	var url =  'https://api.worldoftanks.'+server+'/wgn/clans/list/?application_id='+process.env.WGAPI_NA+'&search='+tag+'&limit=1&game=wot&fields=clan_id';
+	var extractId = function(data, cb){
+		var extracted = data["data"][0]["clan_id"];
+
+		cb(null,extracted);
+	}
+	waterfallGenericCB(url,[extractId],callback);
+}
+
+exports.getClanPlayers = function(clanid, server, callback){
+	var url = 'https://api.worldoftanks.'+server+'/wgn/clans/info/?application_id='+process.env.WGAPI_NA+'&clan_id='+clanid+'&fields=members.account_id%2Cmembers.account_name';
+	var extractPlayers = function(data, cb){
+		var extracted = data["data"][clanid]["members"];
+		cb(null,extracted);
+	}
+	waterfallGenericCB(url,[extractPlayers],callback);
 }
 
 function waterfallGeneric(url, funcs){

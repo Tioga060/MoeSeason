@@ -1,5 +1,7 @@
 var Player = require('./models/player');
 var cron = require('node-schedule');
+var variables = require('./variables.js');
+var wgapi = require('./wgapi.js');
 
 function addUpdatePlayer(info, cookies, cb){
 	if(info.server=="na") {info.server = "com";}
@@ -25,6 +27,13 @@ exports.getPlayerInfo = function(url){
 	return {'playerid':playerid,'username':username,'server':server};
 }
 
+function updateSessionData(data, callback){
+	Player.update({'playerid': data.playerid},{ $set: { 'latest_stats': data.latest_stats, 'session_data':data.session_data, 'top_sessions': data.top_sessions}},function (err, newdata) {
+		if (err) return handleError(err);
+		console.log(newdata);
+		callback(null, data);
+	});
+}
 
 exports.updateSession= function(playerid, cb){
 	Player.findOne({ 'playerid': playerid },'-cookie', function (err, person) {
@@ -33,21 +42,7 @@ exports.updateSession= function(playerid, cb){
 		//Return Player
 		console.log("Player gotten "+person.playerid);
 		person.getSession(function(err, data){
-			sessionData = {};//Optimize this to only add new session instead of recreating every time
-			data.sessions.forEach(function(session){
-				for (tank in session){
-					if(!sessionData[tank]) {sessionData[tank] = [];}
-					session[tank]['tankid'] = tank;
-					session[tank]['dpg'] = parseInt(session[tank]['damage_dealt']/session[tank]['battles']);
-					session[tank]['epg'] = parseInt(session[tank]['xp']/session[tank]['battles']);
-					sessionData[tank].push(session[tank]);
-				}
-			});
-			Player.update({'playerid': data.playerid},{ $set: { 'latest_stats': data.latest_stats, 'sessions': data.sessions, 'session_data':sessionData}},function (err, newdata) {
-			  if (err) return handleError(err);
-			  console.log(newdata);
-			  cb(null, data);
-			});
+			updateSessionData(data,cb);
 		});
 	});
 }
@@ -60,20 +55,7 @@ function updateAll(){
 				person = players[i];
 				console.log("Player gotten "+person.playerid);
 				person.getSession(function(err, data){
-					sessionData = {};//Optimize this to only add new session instead of recreating every time
-					data.sessions.forEach(function(session){
-						for (tank in session){
-							if(!sessionData[tank]) {sessionData[tank] = [];}
-							session[tank]['tankid'] = tank;
-							session[tank]['dpg'] = parseInt(session[tank]['damage_dealt']/session[tank]['battles']);
-							session[tank]['epg'] = parseInt(session[tank]['xp']/session[tank]['battles']);
-							sessionData[tank].push(session[tank]);
-						}
-					});
-					Player.update({'playerid': data.playerid},{ $set: { 'latest_stats': data.latest_stats, 'sessions': data.sessions, 'session_data':sessionData }},function (err, newdata) {
-					  if (err) return handleError(err);
-					  console.log(newdata);
-					});
+					updateSessionData(data,cb);
 				});
 
 				i++;                     //  increment the counter
@@ -87,9 +69,71 @@ function updateAll(){
 	});
 }
 
-cron.scheduleJob('0 0,15,30,45 * * * *', function(){
+/*cron.scheduleJob('0 0,15,30,45 * * * *', function(){
     console.log('Running session pull');
 	updateAll();
-});
+});*/
+
+function compareByStat(stat){
+	return function compare(a,b) {
+		if (a[stat] < b[stat])
+			return 1;
+		if (a[stat] > b[stat])
+			return -1;
+		return 0;
+	}
+}
 
 
+
+function rankSessions(cb){
+
+	
+	Player.find({},'-cookie',function(err, players) {
+		var allTopSessions = {};
+		players.forEach(function(player){
+			if(player.top_sessions){
+				for (tank in player.top_sessions){
+					if(!allTopSessions[tank]){allTopSessions[tank] = [];}
+					allTopSessions[tank].push(player.top_sessions[tank]);
+				}
+			}
+		});
+		for (tank in allTopSessions){
+			var realtank = tank.toString();
+			allTopSessions[realtank].sort(compareByStat(variables.sessionPriority));
+		}
+		cb(allTopSessions);
+	});
+}
+
+exports.rankAll = rankSessions;
+
+function addClan(tag, server, cb){
+	wgapi.getClanId(tag, server, function(err, clanid){
+		console.log("got clan id "+clanid);
+		wgapi.getClanPlayers(clanid, server, function(err, players){
+			var i = 0; 
+			function throughPlayers () {           //  create a loop function
+				setTimeout(function () {    //  call a 3s setTimeout when the loop is called
+					person = players[i];
+					var info = {'playerid':person.account_id, 'username':person.account_name, 'server':server};
+					var cookie = {key:'',sig:''};
+					console.log("Player gotten "+person.playerid);
+					addUpdatePlayer(info, cookie, function(err, res){
+						console.log("player added "+person.account_name);
+					});
+
+					i++;                     //  increment the counter
+					if (i < players.length) {            //  if the counter < 10, call the loop function
+						throughPlayers();             //  ..  again which will trigger another 
+					}                        //  ..  setTimeout()
+			   }, 500)
+			}
+			throughPlayers();
+			});
+			cb(null, {'message':"Clan added"});
+	});
+}
+
+exports.insertClan = addClan;

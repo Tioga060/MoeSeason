@@ -4,8 +4,8 @@
 angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$routeParams', 'Player','Auth', function($scope, $routeParams, Player, Auth) {
 	
 	Auth.getUser(function(user){$scope.currentUser = user;});
-	if($scope.currentUser["playerid"] == $routeParams.playerid) {$scope.sessionbutton = true;}
-	else {$scope.sessionbutton = false;}
+	if($scope.currentUser){if($scope.currentUser["playerid"] == $routeParams.playerid) {$scope.sessionbutton = true;} else {$scope.sessionbutton = false;}}
+	
     Player.get($routeParams.playerid).then(function(data){
 		for(tank in data.latest_stats){
 			data.latest_stats[tank]["dpg"] = (parseInt(data.latest_stats[tank]["damage_dealt"]/data.latest_stats[tank]["battles"])||0);

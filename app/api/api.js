@@ -3,6 +3,7 @@ var router = express.Router();              // get an instance of the express Ro
 var Player = require('../models/player');
 var wgapi = require('../wgapi');
 var DB = require('../db.js');
+var variables = require('../variables');
 
 module.exports = function(app) {
 	
@@ -39,11 +40,9 @@ module.exports = function(app) {
 		
 		 // get all the bears (accessed at GET http://localhost:8080/api/bears)
 		.get(function(req, res) {
-			Player.find({},'playerid username session_data',function(err, players) {
+			Player.find({},'playerid username session_data',function(err, players) {//playerid username session_data
 				if (err)
 					res.send(err);
-				console.log("this is the req");
-				console.log(req);
 				res.json(players);
 			});
 		});
@@ -66,6 +65,15 @@ module.exports = function(app) {
     // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
     .get(function(req, res) {
 		DB.updateSession(req.params.playerid, function(err, result){
+			res.json(result);
+		});
+	});
+	
+	router.route('/sessions')
+
+    // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
+    .get(function(req, res) {
+		DB.rankAll(function(result){
 			res.json(result);
 		});
 	});
@@ -99,7 +107,21 @@ module.exports = function(app) {
 		});
     });
 	
+	router.route('/rules')
+
+    // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
+    .get(function(req, res) {
+		res.json({'sessionMin':(variables.sessionMin).toString(),'sessionsRequired':(variables.sessionsRequired).toString(),'tankIDs':variables.tankIDs});
+    });
 	
+	router.route('/add/clan/:server/:clantag')
+
+    // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
+    .get(function(req, res) {
+		DB.insertClan(req.params.clantag, req.params.server, function(err, result){
+			res.json(result);
+		});
+	});
 	
 	// REGISTER OUR ROUTES -------------------------------
 	// all of our routes will be prefixed with /api

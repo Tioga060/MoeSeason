@@ -9,6 +9,22 @@ angular.module('TankService', []).factory('Tank', ['$http', '$q', function($http
 				console.log(data);
 				return data.data;
 			});
+        },
+		
+		getTopTanks : function() {
+            return $http.get('/api/sessions').then(function(data){
+				console.log("got tanks");
+				console.log(data);
+				return data.data;
+			});
+        },
+		
+		getRules : function() {
+            return $http.get('/api/rules').then(function(data){
+				console.log("got tanks");
+				console.log(data);
+				return data.data;
+			});
         }
     }       
 

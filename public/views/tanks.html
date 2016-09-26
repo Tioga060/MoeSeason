@@ -1,0 +1,36 @@
+<!-- public/views/nerd.html -->
+
+<div class="jumbotron text-center">
+    <h1>Tank Rankings This Season</h1>
+	<h2>Rules:</h2>
+	<p>{{rules.sessionMin}} games per session.</p>
+	<p>{{rules.sessionsRequired}} sessions required for rank.</p>
+	<div ng:repeat="(tank,stats) in tanks">
+		<table class="table">
+			<div class="container-fluid" ng:repeat="(rank, data) in stats">
+					<h3 class="text-left" ng-show="rank == 0"><img ng-src="{{data.tankid | tankimage}}" alt="Description" />{{data.tankid | tankname}}</h3>
+			</div>
+
+			<thead>
+				
+				<tr>
+					<th class="col-md-1">Rank</th>
+					<th class="col-md-2">Player</th>
+					<th class="col-md-1">Battles</th>
+					<th class="col-md-2">Average Experience</th>
+					<th class="col-md-2">DPG</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="text-left" ng:repeat="(rank, data) in stats">
+					<td>{{rank | sessionnumber}}</td>
+					<td><a ng-href="/player/{{data.playerid}}">{{data.username}}</a></td>
+					<td>{{data.battles}}</td>
+					<td>{{data.epg}}</td>
+					<td>{{data.dpg}}</td>
+
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

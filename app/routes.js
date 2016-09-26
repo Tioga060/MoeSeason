@@ -76,6 +76,18 @@ module.exports = function(app) {
 		}*/
 	});
 	
+	app.get('/players', function(req, res) {
+		res.sendfile('./public/index.html'); // load our public/index.html file
+	});
+	
+	app.get('/tanks', function(req, res) {
+		res.sendfile('./public/index.html'); // load our public/index.html file
+	});
+	
+	app.get('/player/:playerid', function(req, res) {
+		res.sendfile('./public/index.html'); // load our public/index.html file
+	});
+	
 	//Handle 404's here ========================================================= =========================================================
 	app.get('/:test', function(req, res) {
 		res.sendfile('./public/index.html'); // load our public/index.html file

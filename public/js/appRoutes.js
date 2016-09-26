@@ -25,6 +25,11 @@
         .when('/players', {
             templateUrl: 'views/playerlist.html',
             controller: 'PlayerListController'
+        })
+		
+		.when('/tanks', {
+            templateUrl: 'views/tanks.html',
+            controller: 'TanksController'
         });
 		
 		// nerds page that will use the NerdController

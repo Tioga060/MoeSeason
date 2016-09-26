@@ -4,4 +4,8 @@ exports.tankIDs = [2417,3649,3681,3937,4145,5425,6145,6209,6225,6929,7169,7249,8
 
 exports.tankWeights = {};
 
-exports.sessionMin = 3;
+exports.sessionMin = 1;
+
+exports.sessionsRequired = 1;
+
+exports.sessionPriority = 'epg';
