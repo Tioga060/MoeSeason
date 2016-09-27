@@ -11,17 +11,7 @@ angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$rout
 			data.latest_stats[tank]["dpg"] = (parseInt(data.latest_stats[tank]["damage_dealt"]/data.latest_stats[tank]["battles"])||0);
 			if(data.latest_stats[tank]["battles"] == 0){delete data.latest_stats[tank];}
 		}
-		/*sessionData = {};
-		data.sessions.forEach(function(session){
-			for (tank in session){
-				if(!sessionData[tank]) {sessionData[tank] = [];}
-				session[tank]['tankid'] = tank;
-				session[tank]['dpg'] = parseInt(session[tank]['damage_dealt']/session[tank]['battles']);
-				session[tank]['epg'] = parseInt(session[tank]['xp']/session[tank]['battles']);
-				sessionData[tank].push(session[tank]);
-			}
-		});
-		data['session_data'] = sessionData;*/
+
 		////console.log(sessionData);
 		Tank.getRules().then(function(rules){
 			$scope.rules = rules;
@@ -35,6 +25,7 @@ angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$rout
 					else{
 						data.session_data[tank][i].isTop = false;
 					}
+					data.session_data[tank][i].wr = parseInt(data.session_data[tank][i].wins/data.session_data[tank][i].battles*100);
 				}
 				data.session_data[tank].sort(function(a,b){
 				  // Turn your strings into dates, and then subtract them

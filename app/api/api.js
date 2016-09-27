@@ -1,8 +1,10 @@
 var express= require('express');
 var router = express.Router();              // get an instance of the express Router
 var Player = require('../models/player');
+var Tank = require('../models/tank');
 var wgapi = require('../wgapi');
 var DB = require('../db.js');
+var stats = require('../stats.js');
 var variables = require('../variables');
 
 module.exports = function(app) {
@@ -73,8 +75,19 @@ module.exports = function(app) {
 
     // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
     .get(function(req, res) {
-		DB.rankAll(function(result){
-			res.json(result);
+		Tank.find({'sessions': {$exists: true}},function(err, tanks) {//playerid username session_data
+			if (err)
+				res.send(err);
+			res.json(tanks);
+		});
+	});
+	
+	router.route('/scores')
+
+    // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
+    .get(function(req, res) {
+		stats.calculateMoeScores(function(data){
+			res.json(data);
 		});
 	});
 	
@@ -102,9 +115,19 @@ module.exports = function(app) {
 
     // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
     .get(function(req, res) {
-		wgapi.getTankInfo(req.params.tankid, function (err, tank){
-			res.json(tank);
+		Tank.findOne({ 'tankid': req.params.tankid },'picture name',function(err, tank){
+			if(!tank || !tank['name']){
+
+				wgapi.getTankInfo(req.params.tankid, function (err, tankinfo){
+					res.json(tankinfo);
+				});
+			}
+			else{
+
+				res.json({'name':tank['name'], 'images': {'small_icon': tank['picture']}});
+			}
 		});
+		
     });
 	
 	router.route('/rules')

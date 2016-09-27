@@ -1,7 +1,9 @@
 var Player = require('./models/player');
+var Tank = require('./models/tank');
 var cron = require('node-schedule');
 var variables = require('./variables.js');
 var wgapi = require('./wgapi.js');
+var stats = require('./stats.js');
 
 function addUpdatePlayer(info, cookies, cb){
 	if(info.server=="na") {info.server = "com";}
@@ -43,10 +45,17 @@ exports.updateSession= function(playerid, cb){
 		//Return Player
 		//console.log("Player gotten "+person.playerid);
 		person.getSession(function(err, data){
-			updateSessionData(data,cb);
+			if(err){
+				console.log(err);
+			}
+			else{
+				updateSessionData(data,cb);
+			}
 		});
 	});
 }
+
+
 
 function updateAll(){
 	Player.find({},'-cookie',function(err, players) {
@@ -56,7 +65,12 @@ function updateAll(){
 				person = players[i];
 				//console.log("Player gotten "+person.playerid);
 				person.getSession(function(err, data){
-					updateSessionData(data,function(err, res){});
+					if(err){
+						console.log(err);
+					}
+					else{
+						updateSessionData(data,function(err, res){});
+					}
 				});
 
 				i++;                     //  increment the counter
@@ -69,11 +83,6 @@ function updateAll(){
 		
 	});
 }
-
-cron.scheduleJob('0 0,15,30,45 * * * *', function(){
-    //console.log('Running session pull');
-	updateAll();
-});
 
 function compareByStat(stat){
 	return function compare(a,b) {
@@ -89,26 +98,50 @@ function compareByStat(stat){
 
 function rankSessions(cb){
 
-	
 	Player.find({},'-cookie',function(err, players) {
 		var allTopSessions = {};
 		players.forEach(function(player){
 			if(player.top_sessions){
 				for (tank in player.top_sessions){
 					if(!allTopSessions[tank]){allTopSessions[tank] = [];}
+					player.top_sessions[tank]["wr"] = parseInt(player.top_sessions[tank]["wins"]/player.top_sessions[tank]["battles"]*100);
+					player.top_sessions[tank]["kpg"] = player.top_sessions[tank]["frags"]/player.top_sessions[tank]["battles"];
+					player.top_sessions[tank]["spg"] = player.top_sessions[tank]["spotted"]/player.top_sessions[tank]["battles"];
 					allTopSessions[tank].push(player.top_sessions[tank]);
 				}
 			}
 		});
 		for (tank in allTopSessions){
 			var realtank = tank.toString();
-			allTopSessions[realtank].sort(compareByStat(variables.sessionPriority));
+			var individual_tank = {};
+			//for variables in tank weights, sort by each variable
+			for (stat in variables.tankWeights[realtank]){
+				if(stat != "overall_weight" && variables.tankWeights[realtank][stat] > 0){
+					allTopSessions[realtank].sort(compareByStat(stat));
+					//Store each rank list as an array of playerids
+					allTopSessions[realtank].forEach(function(stats){
+						if(!individual_tank['ranks']){individual_tank['ranks'] = {};}
+						if(!individual_tank['ranks'][stat]){individual_tank['ranks'][stat] = [];}
+						var playerid = stats.playerid;
+						individual_tank['ranks'][stat].push(playerid);
+						if(!individual_tank['sessions']){individual_tank['sessions'] = {};}
+						if(!individual_tank['sessions'][playerid]){individual_tank['sessions'][playerid] = stats;}
+					});
+				}
+				
+			}
+			//Store the player's sessions in the tank entry as an array
+			var query = {'tankid' : realtank},
+				update = { '$set':{'ranks': individual_tank.ranks, 'sessions': individual_tank.sessions}},
+				options = { upsert: true, new: true, setDefaultsOnInsert: true };
+			Tank.findOneAndUpdate(query, update, options, function(error, res) {
+				if (error) {console.log(error); return}
+				res.save(function(){});
+			});
 		}
-		cb(allTopSessions);
+		if(cb){cb();}
 	});
 }
-
-exports.rankAll = rankSessions;
 
 function addClan(tag, server, cb){
 	wgapi.getClanId(tag, server, function(err, clanid){
@@ -138,3 +171,29 @@ function addClan(tag, server, cb){
 }
 
 exports.insertClan = addClan;
+
+function updateMoeScores(players){
+	for (playerid in players){
+		var query = {'playerid' : playerid},
+				update = { $set: { 'moescores': players[playerid] }},
+				options = { upsert: true, new: true, setDefaultsOnInsert: true };
+		Player.findOneAndUpdate(query, update, options, function(error, res) {
+			if (error) {console.log(error); return}
+			res.save(function(){});
+		});
+	}
+}
+
+cron.scheduleJob('0 0,15,30,45 * * * *', function(){
+    //console.log('Running session pull');
+	updateAll();
+});
+
+cron.scheduleJob('0 10,25,40,55 * * * *', function(){
+	rankSessions(stats.calculateMoeScores(updateMoeScores));
+});
+
+cron.scheduleJob('15 36 * * * *', function(){
+	console.log("calcing moe scores");
+	
+});

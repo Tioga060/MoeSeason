@@ -33,6 +33,21 @@ angular.module('TankFilter', [])
 
 })
 
+.filter('metric', function() {
+	
+	  return function convert(metric) {
+		  var conversions = {
+			  'wr': "Win Rate",
+			  'epg': "Experience per Game",
+			  'dpg': "Damage per Game",
+			  'spg': "Spots per Game",
+			  'kpg': "Kills per Game"
+		  };
+		return (conversions[metric] || metric);
+	  }
+
+})
+
 .filter('tankimage', ['Tank', '$q', function(Tank, $q) {
 	var data = {}; // DATA RECEIVED ASYNCHRONOUSLY AND CACHED HERE
     var serviceInvoked = {};
@@ -52,7 +67,7 @@ angular.module('TankFilter', [])
 						data[tankid] = img;//${name}
 					});
 				}
-				return "./public/img/loading.gif"; // PLACEHOLDER WHILE LOADING, COULD BE EMPTY
+				return "./img/loading.gif"; // PLACEHOLDER WHILE LOADING, COULD BE EMPTY
 			}
 			else return realFilter(data[tankid]);
 	  }

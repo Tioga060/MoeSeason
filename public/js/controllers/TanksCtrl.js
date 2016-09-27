@@ -6,10 +6,16 @@ angular.module('TanksCtrl', []).controller('TanksController', ['$scope','$routeP
 	Auth.getUser(function(user){$scope.currentUser = user;});
 
     Tank.getTopTanks().then(function(data){
-
+		data.forEach(function(tank){
+			for(var i = 0; i<tank.moerank.length; i++){
+				var playerid = tank.moerank[i]['playerid'];
+				tank.sessions[playerid]['moescore'] = tank.moerank[i]['total'];
+				
+				tank.moerank[i] = tank.sessions[playerid];
+			}
+		});
 		$scope.tanks = data;
-		//console.log("got this tank data");
-		//console.log(data);
+		console.log(data);
     });
 	Tank.getRules().then(function(data){
 		$scope.rules = data;

@@ -15,6 +15,7 @@ var playerSchema = new Schema({
   starting_stats: {type: {}, default: false},
   latest_stats: {},
   cookie: {},
+  moescores: {},
   session_data: {type: {}, default: false},
   top_sessions: {type: {}, default: false},
   awards: [],
@@ -22,7 +23,7 @@ var playerSchema = new Schema({
   updated_at: Date
 });
 
-/*playerSchema.pre('save', function(next) {
+playerSchema.pre('save', function(next) {
   // get the current date
   var currentDate = new Date();
   
@@ -34,7 +35,7 @@ var playerSchema = new Schema({
 	this.created_at = currentDate;
   //console.log("Ready to save");
   next();
-});*/
+});
 
 playerSchema.methods.setStartingStats = function() {
 	
@@ -60,12 +61,17 @@ playerSchema.methods.getSession = function(callback) {
 	
 	var _this = this;
 	var updateSessions = function(data, cb){
-		_this.session_data = data.session_data;
+		if(data){
+			_this.session_data = data.session_data;
 
-		_this.latest_stats = data.latest_stats;
+			_this.latest_stats = data.latest_stats;
 
-		_this.top_sessions = data.top_sessions;
-		callback(null, _this);
+			_this.top_sessions = data.top_sessions;
+			callback(null, _this);//Consider using findoneandupdate to save instead
+		}
+		else{
+			callback("Skipping player due to WGAPI failure", false);
+		}
 	}
 	wgapi.useTankStats(this.playerid, this.server, variables.tankIDs, [async.apply(statsFuncs.getSessionStats,_this),updateSessions]);
 	

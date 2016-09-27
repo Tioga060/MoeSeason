@@ -1,9 +1,91 @@
 var variables = require('./variables.js');
+var Tank = require('./models/tank');
 
 exports.initializeTankStats = function (stats,cb){
 	var start_values = createTankArray(stats)
 	cb(null,start_values);
 };
+
+function calcMaxScore(weights){
+	var base = Math.pow(variables.exponent,variables.maxrank-1);
+	var total = 0;
+	for (weight in weights){
+		if(weight != "overall_weight"){
+			total += weights[weight]*base;
+		}
+	}
+	return total;
+}
+
+function rankPlayersForTank(playertotals, tankid){
+	var totalArray = [];
+
+	function compare(a,b) {
+		if (a.total < b.total)
+			return 1;
+		if (a.total > b.total)
+			return -1;
+		return 0;
+	}
+
+	for (playerid in playertotals){
+		totalArray.push({'playerid':playerid,'total':playertotals[playerid]});
+	}
+	
+	totalArray.sort(compare);
+
+	var query = {'tankid' : tankid},
+			update = { $set: { 'moerank': totalArray }},
+			options = { upsert: true, new: true, setDefaultsOnInsert: true };
+	Tank.findOneAndUpdate(query, update, options, function(error, res) {
+		if (error) {console.log(error); return}
+		res.save(function(){});
+	});
+
+}
+
+function calcMoeScore(rank){
+	return Math.pow(variables.exponent,variables.maxrank-rank);
+}
+
+exports.calculateMoeScores = calculateMoeScores;
+
+function calculateMoeScores(callback){
+	var players = {};
+	Tank.find({'sessions': {$exists: true}},'ranks tankid',function(err, tanks) {//playerid username session_data
+	
+		tanks.forEach(function(tank){
+			var tankid = tank.tankid;
+			var weights = variables.tankWeights[tankid];
+			var playertotals = {};
+			for (stat in tank.ranks){
+				for(var i = 0; i<tank.ranks[stat].length;i++){
+					var playerid = tank.ranks[stat][i];
+					if(!players[playerid]){players[playerid]={};}
+					if(!players[playerid]['tanks']){players[playerid]['tanks']={};}
+					if(!players[playerid]['tanks'][tankid]){players[playerid]['tanks'][tankid]={};}
+					if(!players[playerid]['tanks'][tankid]['stats']){players[playerid]['tanks'][tankid]['stats']={};}
+					if(!players[playerid]['tanks'][tankid]['stats'][stat]){players[playerid]['tanks'][tankid]['stats'][stat]={};}
+					players[playerid]['tanks'][tankid]['stats'][stat]["rank"] = i+1;
+					var resultMoeScore = calcMoeScore(i+1)*weights[stat];
+					players[playerid]['tanks'][tankid]['stats'][stat]["moeScore"] = resultMoeScore;
+					players[playerid]['tanks'][tankid]['tankid'] = tankid;
+					if(!playertotals[playerid]){playertotals[playerid]=0;}
+					playertotals[playerid]+= resultMoeScore;
+				}
+			}
+			var maxForTank = calcMaxScore(weights);
+			for (playerid in playertotals){
+				playertotals[playerid] = playertotals[playerid]/maxForTank*100
+				players[playerid]['tanks'][tankid]['total'] = playertotals[playerid];
+				if(!players[playerid]["totalScore"]){players[playerid]["totalScore"] = 0;}
+				players[playerid]["totalScore"] += players[playerid]['tanks'][tankid]['total']*weights['overall_weight'];
+			}
+			rankPlayersForTank(playertotals, tankid);
+		});
+		callback(players);
+	});
+}
 
 function createTankArray(stats){
 	var tanklist = {};

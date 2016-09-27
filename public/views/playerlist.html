@@ -8,7 +8,7 @@
 			<tr><th>Player</th><th>Has Sessions?</th></tr>
 		</thead>
 		<tbody>
-			<tr class="text-left"ng:repeat="player in players">
+			<tr class="text-left"ng:repeat="player in players" ng-class="{success: player.session_data}">
 				<td><a ng-href="/player/{{player.playerid}}">{{player.username}}</a></td>
 				<td><i ng-show="player.session_data" class="fa fa-check" style="color:green" aria-hidden="true"></i><i ng-show="!(player.session_data)" class="fa fa-times" style="color:red" aria-hidden="true"></i></td>
 			</tr>

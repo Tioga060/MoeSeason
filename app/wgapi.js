@@ -1,6 +1,7 @@
 require('dotenv').config()
 var request = require('request');
 var async = require('async');
+var Tank = require('./models/tank');
 
 var fetch = function(file,cb){
      request.get(file, function(err,response,body){
@@ -26,8 +27,13 @@ exports.useTankStats = function (playerid, server, tank_ids, funcs){
 
 	var extractTanks = function(data, cb){
 		var extracted = data["data"];
-		extracted = extracted[playerid];
-		cb(null,extracted);
+		if(!extracted || !extracted[playerid]){
+			cb("api error",0);
+		}
+		else{
+			extracted = extracted[playerid];
+			cb(null,extracted);
+		}
 	}
 	waterfallGeneric(url,[extractTanks].concat(funcs));
 };
@@ -37,6 +43,13 @@ exports.getTankInfo = function (tankid, callback){
 	var extractName = function(data, cb){
 		var extracted = data["data"];
 		extracted = extracted[tankid];
+		var query = {'tankid' : tankid},
+				update = { '$set':{'picture': extracted['images']['small_icon'], 'name': extracted['name']}},
+				options = { upsert: true, new: true, setDefaultsOnInsert: true };
+		Tank.findOneAndUpdate(query, update, options, function(error, res) {
+			if (error) {console.log(error); return}
+			res.save(function(){});
+		});
 		cb(null,extracted);
 	}
 	waterfallGenericCB(url,[extractName],callback);
@@ -73,7 +86,9 @@ function waterfallGeneric(url, funcs){
 			getJSON
 			].concat(funcs)),
 		function (err, result) {
-		// result now equals 'done'
+			if(err){
+				funcs[funcs.length-1](false, function(){});
+			}
 		}
 	);
 }

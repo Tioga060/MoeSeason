@@ -42,6 +42,7 @@
 					<th class="col-md-1">Battles</th>
 					<th class="col-md-2">Average Experience</th>
 					<th class="col-md-2">DPG</th>
+					<th class="col-md-2">Winrate</th>
 					<th class="col-md-2">Pull Time</th>
 				</tr>
 			</thead>
@@ -51,7 +52,33 @@
 					<td>{{session.battles}}</td>
 					<td>{{session.epg}}</td>
 					<td>{{session.dpg}}</td>
-					<td>{{session.date | date:'MMM-d h:m a'}}</td>
+					<td>{{session.wr}}%</td>
+					<td>{{session.date | date:'MMM-d h:mm a'}}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	
+	
+	
+	<h2>Tank Ranks</h2>
+	<h3>Total MoeScore: {{player.moescores.totalScore | number:2}}</h3>
+	<div ng:repeat="(tank,data) in player.moescores.tanks">
+		<h3 class="text-left"><img ng-src="{{tank | tankimage}}" alt="Description" />{{tank | tankname}}</h3>
+		<h4 class="text-left">Score: {{data.total | number:2}}</h4>
+		<table class="table">
+			<thead>
+				<tr>
+					<th class="col-md-1">Metric</th>
+					<th class="col-md-1">Rank</th>
+					<th class="col-md-2">Resulting Score</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="text-left" ng:repeat="(metric, info) in data.stats" ng-class="{success: session.isTop}">
+					<td>{{metric | metric}}</td>
+					<td>{{info.rank}}</td>
+					<td>{{info.moeScore | number:0}}</td>
 				</tr>
 			</tbody>
 		</table>
