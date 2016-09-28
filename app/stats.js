@@ -7,7 +7,7 @@ exports.initializeTankStats = function (stats,cb){
 };
 
 function calcMaxScore(weights){
-	var base = Math.pow(variables.exponent,variables.maxrank-1);
+	var base = variables.calcMoeScore(1);
 	var total = 0;
 	for (weight in weights){
 		if(weight != "overall_weight"){
@@ -44,9 +44,6 @@ function rankPlayersForTank(playertotals, tankid){
 
 }
 
-function calcMoeScore(rank){
-	return Math.pow(variables.exponent,variables.maxrank-rank);
-}
 
 exports.calculateMoeScores = calculateMoeScores;
 
@@ -67,7 +64,7 @@ function calculateMoeScores(callback){
 					if(!players[playerid]['tanks'][tankid]['stats']){players[playerid]['tanks'][tankid]['stats']={};}
 					if(!players[playerid]['tanks'][tankid]['stats'][stat]){players[playerid]['tanks'][tankid]['stats'][stat]={};}
 					players[playerid]['tanks'][tankid]['stats'][stat]["rank"] = i+1;
-					var resultMoeScore = calcMoeScore(i+1)*weights[stat];
+					var resultMoeScore = variables.calcMoeScore(i+1)*weights[stat];
 					players[playerid]['tanks'][tankid]['stats'][stat]["moeScore"] = resultMoeScore;
 					players[playerid]['tanks'][tankid]['tankid'] = tankid;
 					if(!playertotals[playerid]){playertotals[playerid]=0;}

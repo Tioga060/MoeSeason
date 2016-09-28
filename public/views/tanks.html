@@ -5,10 +5,14 @@
 	<h2>Rules:</h2>
 	<p>{{rules.sessionMin}} games per session.</p>
 	<p>{{rules.sessionsRequired}} sessions required for rank.</p>
-	<div ng:repeat="stats in tanks">
+	
+	<input type="text" class="form-control" placeholder="Search Tank" ng-model="tankSearch">
+	<input type="text" class="form-control" placeholder="Search Player" ng-model="playerSearch">
+
+	<div ng:repeat="tank in tanks" ng-hide="!tank.name.toLowerCase().includes(tankSearch.toLowerCase()) || setTankHide(tank.name)">
 		<table class="table">
 			<div class="container-fluid">
-					<h3 class="text-left"><img ng-src="{{stats.picture}}" alt="Description" />{{stats.image}}</h3>
+					<h3 class="text-left"><img ng-src="{{tank.picture}}" alt="Description" />{{tank.name}}</h3>
 			</div>
 
 			<thead>
@@ -16,23 +20,23 @@
 				<tr>
 					<th class="col-md-1">Rank</th>
 					<th class="col-md-3">Player</th>
-					<th class="col-md-2">Tank MoeScore</th>
 					<th class="col-md-1">Battles</th>
-					<th class="col-md-2">Average Experience</th>
-					<th class="col-md-2">DPG</th>
-					<th class="col-md-1">Winrate</th>
+					<th class="col-md-2" ng:repeat="statName in tank.rankList">
+						<a href="#" ng-click="tank.sort = statName">{{statName | metric}}<i class="fa fa-caret-down" ng-show="(statName==tank.sort)" aria-hidden="true"></i></a>
+					</th>
 				</tr>
 			</thead>
-			<tbody>
-				<tr class="text-left" ng:repeat="(rank, data) in stats.moerank">
+			<tbody ng:repeat="(stat, ranks) in tank.ranks" ng-show="(stat==tank.sort)">
+				<tr class="text-left" ng:repeat="(rank, playerid) in ranks" ng-hide="setHide(tank.name, tank.sessions[playerid].username)">
 					<td>{{rank | sessionnumber}}</td>
-					<td><a ng-href="/player/{{data.playerid}}">{{data.username}}</a></td>
-					<td>{{data.moescore | number:2}}</td>
-					<td>{{data.battles}}</td>
-					<td>{{data.epg}}</td>
-					<td>{{data.dpg}}</td>
-					<td>{{data.wr}}%</td>
+					<td><a ng-href="/player/{{playerid}}">{{tank.sessions[playerid].username}}</a></td>
+					<td>{{tank.sessions[playerid].battles}}</td>
+					<td ng:repeat="statName in tank.rankList">
+						{{tank.sessions[playerid][statName] | metric_value:statName}}
+					</th>
+
 				</tr>
+
 			</tbody>
 		</table>
 	</div>

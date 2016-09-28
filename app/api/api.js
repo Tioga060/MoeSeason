@@ -42,7 +42,7 @@ module.exports = function(app) {
 		
 		 // get all the bears (accessed at GET http://localhost:8080/api/bears)
 		.get(function(req, res) {
-			Player.find({},'playerid username session_data',function(err, players) {//playerid username session_data
+			Player.find({},'playerid username moescores.totalScore',function(err, players) {//playerid username session_data
 				if (err)
 					res.send(err);
 				res.json(players);

@@ -37,13 +37,35 @@ angular.module('TankFilter', [])
 	
 	  return function convert(metric) {
 		  var conversions = {
-			  'wr': "Win Rate",
-			  'epg': "Experience per Game",
-			  'dpg': "Damage per Game",
-			  'spg': "Spots per Game",
-			  'kpg': "Kills per Game"
+			  'wr': "Winrate",
+			  'epg': "Exp/Game",
+			  'dpg': "Dmg/Game",
+			  'spg': "Spots/Game",
+			  'kpg': "Kills/Game",
+			  'moerank': "MoeScore "
 		  };
 		return (conversions[metric] || metric);
+	  }
+
+})
+
+.filter('metric_value', function($filter) {
+		var numberFilter = $filter('number');
+		
+	  return function convert(val,metric) {
+		  var conversions = {
+			  'wr': function(input){return numberFilter(input, 0).toString()+"%";},
+			  'epg': function(input){return numberFilter(input, 0).toString();},
+			  'dpg': function(input){return numberFilter(input, 0).toString();},
+			  'spg': function(input){return numberFilter(input, 3).toString();},
+			  'kpg': function(input){return numberFilter(input, 3).toString();},
+			  'moerank': function(input){
+						if(numberFilter(input, 2)){return numberFilter(input, 2).toString();}
+						else {return "Still Calculating"};
+					}
+		  };
+		  
+		return (conversions[metric](val) || val);
 	  }
 
 })

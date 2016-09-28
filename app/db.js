@@ -192,8 +192,3 @@ cron.scheduleJob('0 0,15,30,45 * * * *', function(){
 cron.scheduleJob('0 10,25,40,55 * * * *', function(){
 	rankSessions(stats.calculateMoeScores(updateMoeScores));
 });
-
-cron.scheduleJob('15 36 * * * *', function(){
-	console.log("calcing moe scores");
-	
-});

@@ -8,9 +8,10 @@ exports.sessionsRequired = 3;
 
 exports.sessionPriority = 'epg';
 
-exports.exponent = 1.06;
 
-exports.maxrank = 100;
+exports.calcMoeScore = function(rank){
+	return Math.pow(1.06,100-rank*3);
+}
 
 exports.tankWeights = {
 "2417": {//"Cz04 T50 51"

@@ -74,6 +74,7 @@
 					<th class="col-md-2">Resulting Score</th>
 				</tr>
 			</thead>
+
 			<tbody>
 				<tr class="text-left" ng:repeat="(metric, info) in data.stats" ng-class="{success: session.isTop}">
 					<td>{{metric | metric}}</td>
