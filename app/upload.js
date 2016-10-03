@@ -35,45 +35,40 @@ module.exports = function(app) {
 			res.status(500).send("Error: no cookie");
 		}
 		else{
-			Player.findOne({ 'cookie.key': req.cookies.key},'-cookie', function (err, person) {
-				if (err)
-					res.status(500).send("Error: no player found");
-				//Return Player
-				else{
-					if(person.playerid.toString() == playerid.toString()){
-						file.mv(moveloc, function(err) {
-							if (err) {
-								res.status(500).send(err);
-							}
-							else {
-								var query = {'playerid' : playerid},
-									update = { '$set':{'color':req.body.playercolor}},
-									options = { upsert: true, new: true, setDefaultsOnInsert: true };
+			var success = function(){
+				
+				file.mv(moveloc, function(err) {
+					if (err) {
+						res.status(500).send(err);
+					}
+					else {
+						var query = {'playerid' : playerid},
+							update = { '$set':{'color':req.body.playercolor}},
+							options = { upsert: true, new: true, setDefaultsOnInsert: true };
 
-								// Find the document
-								Player.findOneAndUpdate(query, update, options, function(error, p) {
-									p.save(function(){
-										gm(moveloc)
-										.resize(468, 100, "!")
-										.write('./public/sigs/backgrounds/'+playerid.toString()+'.png', function (err) {
-											if (err) console.log(err);
-											fs.unlink(moveloc);
-											DB.updateSignature(playerid.toString(), function(){
-												res.send('File uploaded!');
-											});
-											
-										})
+						// Find the document
+						Player.findOneAndUpdate(query, update, options, function(error, p) {
+							p.save(function(){
+								gm(moveloc)
+								.resize(468, 100, "!")
+								.write('./public/sigs/backgrounds/'+playerid.toString()+'.png', function (err) {
+									if (err) console.log(err);
+									fs.unlink(moveloc);
+									DB.updateSignature(playerid.toString(), function(){
+										res.send('File uploaded!');
 									});
-								});
-								
-							}
+									
+								})
+							});
 						});
+						
 					}
-					else{
-						res.status(500).send("Wrong player attempting to change signature");
-					}
-				}
-			});
+				});
+			}
+			var failure = function(){
+				res.status(500).send("Error: Wrong player attempting to change signature");
+			}
+			DB.verifyAssertedPlayerid(playerid,req.cookies.key, success, failure);
 		}
 		
 		

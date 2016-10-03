@@ -1,13 +1,22 @@
 // public/js/controllers/PlayerCtrl.js
 
 
-angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$routeParams','Upload','$q', 'Player','Auth','Tank', function($scope, $routeParams, Upload, $q, Player, Auth, Tank) {
+angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$rootScope','$routeParams','Upload','$q', 'Player','Auth','Tank','Comment','notifications', function($scope,$rootScope, $routeParams, Upload, $q, Player, Auth, Tank, Comment, notifications) {
 	
-	Auth.getUser(function(user){$scope.currentUser = user;});
+	Comment.setTarget($routeParams.playerid,function(){$rootScope.getComments();});
+	//Auth.getUser(function(user){$scope.currentUser = user;});
 	$scope.customize = false;
 	$scope.rand = Math.random();
 	$scope.playercolor = '#ffffff';
 	if($scope.currentUser){if($scope.currentUser["playerid"] == $routeParams.playerid) {$scope.sessionbutton = true;} else {$scope.sessionbutton = false;}}
+	
+	$scope.showError = function (error) {
+        notifications.showError({
+            message: error,
+            hideDelay: 2000, //ms
+            hide: true //bool
+        });
+    };
 	
     Player.get($routeParams.playerid).then(function(data){
 		for(tank in data.latest_stats){
@@ -51,21 +60,24 @@ angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$rout
 	
 	$scope.submit = function() {
       if ($scope.form.file.$valid && $scope.file) {
-		  console.log($scope.file);
 		$scope.upload($scope.file);
       }
+	  else {
+		  $scope.showError("Error: Must upload .jpg or .png file less than 4 MB");
+	  }
     };
 
 	// upload on file select or drop
     $scope.upload = function (file) {
         Upload.upload({
             url: '/upload',
-            data: {file: file, 'playerid': $scope.currentUser.playerid, 'playercolor':$scope.playercolor}
+            data: {file: file, 'playerid': $scope.player.playerid, 'playercolor':$scope.playercolor}
         }).then(function (resp) {
             console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
 			$scope.rand = Math.random();
         }, function (resp) {
             console.log('Error status: ' + resp.status +": "+ resp.data);
+			$scope.showError(resp.data);
         }, function (evt) {
             var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
             console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);

@@ -1,16 +1,27 @@
 // public/js/controllers/TanksCtrl.js
 
 
-angular.module('TanksCtrl', []).controller('TanksController', ['$scope','$routeParams', 'Tank','Auth', function($scope, $routeParams, Tank, Auth) {
+angular.module('TanksCtrl', []).controller('TanksController', ['$scope','$routeParams','$rootScope', 'Tank','Auth','Comment','notifications', function($scope, $routeParams,$rootScope, Tank, Auth, Comment,notifications) {
 	
-	Auth.getUser(function(user){$scope.currentUser = user;});
+	$scope.showWarning = function (error) {
+        notifications.showWarning({
+            message: error,
+            hideDelay: 1400, //ms
+            hide: true //bool
+        });
+    };
+	
+	$scope.showWarning("This page will take a second to load");
+	
+	//Auth.getUser(function(user){$scope.currentUser = user;});
+	Comment.setTarget('tanks',function(){$rootScope.getComments();});
 	$scope.tankSearch = '';
 	if($routeParams.tankid){$scope.tankSearch = $routeParams.tankid.replace('*', '/');;}
 	$scope.playerSearch = '';
 	$scope.hideTank = {};
 	$scope.tanks = [];
 	$scope.loading = true;
-    /*Tank.getTopTanks().then(function(data){
+    Tank.getTopTanks().then(function(data){
 		data.forEach(function(tank){
 			var tname = tank.name;
 			tank.sort = "moerank";
@@ -31,11 +42,11 @@ angular.module('TanksCtrl', []).controller('TanksController', ['$scope','$routeP
 			}
 			
 		});
-		//$scope.tanks = data;
+		$scope.tanks = data;
 		console.log(data);
 		$scope.loading = false;
-    });*/
-	Tank.getRules().then(function(data){
+    });
+	/*Tank.getRules().then(function(data){
 		$scope.rules = data;
 		for (tankid in data.weights){
 			console.log("tankid " +tankid);
@@ -63,7 +74,7 @@ angular.module('TanksCtrl', []).controller('TanksController', ['$scope','$routeP
 			});
 		}
 		
-    });
+    });*/
 	
 	$scope.setHide = function(tankname, username){
 		if((username.toLowerCase()).includes($scope.playerSearch.toLowerCase())){

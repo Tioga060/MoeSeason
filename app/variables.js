@@ -22,30 +22,30 @@ exports.maxScore = calcMoeScore(1);
 
 exports.tankWeights = {
 "2417": {//"Cz04 T50 51"
-"overall_weight": 1,
+"overall_weight": 5,
 
-"dpg": 1,
+"dpg": 2,
 "epg": 5,
-"kpg": 0.5,
-"spg": 0.5,
+"kpg": 1,
+"spg": 0.1,
 "wr": 0.5
 },
 "3649": {//"Bat.Châtillon 25 t"
-"overall_weight": 1,
+"overall_weight": 5,
 
-"dpg": 1,
+"dpg": 2,
 "epg": 5,
-"kpg": 0.5,
-"spg": 0.5,
+"kpg": 1,
+"spg": 1,
 "wr": 0.5
 },
 "3681": {//"STB1"
-"overall_weight": 1,
+"overall_weight": 4,
 
 "dpg": 1,
 "epg": 5,
 "kpg": 0.5,
-"spg": 0.5,
+"spg": 0.1,
 "wr": 0.5
 },
 "3937": {//"Type 5 Heavy"
@@ -53,21 +53,21 @@ exports.tankWeights = {
 
 "dpg": 1,
 "epg": 5,
-"kpg": 0.5,
-"spg": 0.5,
+"kpg": 1,
+"spg": 0.1,
 "wr": 0.5
 },
 "4145": {//"121"
-"overall_weight": 1,
+"overall_weight": 4,
 
-"dpg": 1,
+"dpg": 2,
 "epg": 5,
-"kpg": 0.5,
-"spg": 0.5,
+"kpg": 1,
+"spg": 0.1,
 "wr": 0.5
 },
 "5425": {//"113"
-"overall_weight": 1,
+"overall_weight": 3,
 
 "dpg": 1,
 "epg": 5,
@@ -85,16 +85,16 @@ exports.tankWeights = {
 "wr": 0.5
 },
 "6209": {//"AMX 50 B"
-"overall_weight": 1,
+"overall_weight": 5,
 
-"dpg": 1,
+"dpg": 2,
 "epg": 5,
-"kpg": 0.5,
-"spg": 0.5,
+"kpg": 1,
+"spg": 0.1,
 "wr": 0.5
 },
 "6225": {//"FV215b"
-"overall_weight": 1,
+"overall_weight": 5,
 
 "dpg": 1,
 "epg": 5,
@@ -121,7 +121,7 @@ exports.tankWeights = {
 "wr": 0.5
 },
 "7249": {//"Centurion Action X"
-"overall_weight": 1,
+"overall_weight": 3,
 
 "dpg": 1,
 "epg": 5,
@@ -166,7 +166,7 @@ exports.tankWeights = {
 "wr": 0.5
 },
 "9489": {//"E 100"
-"overall_weight": 1,
+"overall_weight": 2,
 
 "dpg": 1,
 "epg": 5,
@@ -175,7 +175,7 @@ exports.tankWeights = {
 "wr": 0.5
 },
 "10785": {//"T110E5"
-"overall_weight": 1,
+"overall_weight": 3,
 
 "dpg": 1,
 "epg": 5,
@@ -202,7 +202,7 @@ exports.tankWeights = {
 "wr": 0.5
 },
 "12305": {//"E 50 Ausf. M"
-"overall_weight": 1,
+"overall_weight": 3,
 
 "dpg": 1,
 "epg": 5,
@@ -220,7 +220,7 @@ exports.tankWeights = {
 "wr": 0.5
 },
 "13089": {//"T110E4"
-"overall_weight": 1,
+"overall_weight": 3,
 
 "dpg": 1,
 "epg": 5,
@@ -238,7 +238,7 @@ exports.tankWeights = {
 "wr": 0.5
 },
 "13825": {//"T62A"
-"overall_weight": 1,
+"overall_weight": 2,
 
 "dpg": 1,
 "epg": 5,
@@ -274,7 +274,7 @@ exports.tankWeights = {
 "wr": 0.5
 },
 "14113": {//"M48A1 Patton"
-"overall_weight": 1,
+"overall_weight": 3,
 
 "dpg": 1,
 "epg": 5,
@@ -319,7 +319,7 @@ exports.tankWeights = {
 "wr": 0.5
 },
 "15617": {//"Object 907"
-"overall_weight": 1,
+"overall_weight": 5,
 
 "dpg": 1,
 "epg": 5,
@@ -337,7 +337,7 @@ exports.tankWeights = {
 "wr": 0.5
 },
 "16897": {//"Object 140"
-"overall_weight": 1,
+"overall_weight": 3,
 
 "dpg": 1,
 "epg": 5,
@@ -364,7 +364,7 @@ exports.tankWeights = {
 "wr": 0.5
 },
 "18209": {//"T49"
-"overall_weight": 1,
+"overall_weight": 2,
 
 "dpg": 1,
 "epg": 5,
@@ -373,7 +373,7 @@ exports.tankWeights = {
 "wr": 0.5
 },
 "18449": {//"Spähpanzer Ru 251"
-"overall_weight": 1,
+"overall_weight": 2,
 
 "dpg": 1,
 "epg": 5,

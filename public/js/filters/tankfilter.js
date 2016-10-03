@@ -115,6 +115,33 @@ angular.module('TankFilter', [])
 
 })
 
+.filter('playerName', ['Player', '$q', function(Player, $q) {
+	var data = {}; // DATA RECEIVED ASYNCHRONOUSLY AND CACHED HERE
+    var serviceInvoked = {};
+	
+    function realFilter(playername) { // REAL FILTER LOGIC
+        return playername;
+    }
+	  function getPlayerName(playerid) {
+			if( !(playerid in data) ) {
+				if( !(playerid in serviceInvoked) ) {
+					serviceInvoked[playerid] = true;
+					//console.log("attempting to get "+tankid);
+					// CALL THE SERVICE THAT FETCHES THE DATA HERE
+					Player.getPlayerName(playerid).then(function(result) {
+						var name = result['username'];
+						//console.log("got image" + img);
+						data[playerid] = name;//${name}
+					});
+				}
+				return "Loading..."; // PLACEHOLDER WHILE LOADING, COULD BE EMPTY
+			}
+			else return realFilter(data[playerid]);
+	  }
+	  getPlayerName.$stateful = true;
+	  return getPlayerName;
+}])
+
 .filter('tankimage', ['Tank', '$q', function(Tank, $q) {
 	var data = {}; // DATA RECEIVED ASYNCHRONOUSLY AND CACHED HERE
     var serviceInvoked = {};

@@ -6,7 +6,7 @@
         // home page
         .when('/', {
             templateUrl: 'views/home.html',
-            controller: 'MainController'
+            controller: 'HomeController'
         })
 
         // nerds page that will use the NerdController

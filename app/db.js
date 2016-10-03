@@ -248,6 +248,23 @@ function debugPlayerTops(){
 	});
 }
 
+function verifyAssertedPlayerid(claimedid, cookie,cb, errcb){
+	Player.findOne({'cookie.key': cookie},'-cookie', function (err, person) {
+		if (err){}
+		//Return Player
+		else{
+			if(person.playerid.toString() == claimedid.toString()){
+				cb();
+			}
+			else{
+				if(errcb){errcb();}
+			}
+		}
+	});
+}
+
+exports.verifyAssertedPlayerid = verifyAssertedPlayerid;
+
 cron.scheduleJob('0 0,15,30,45 * * * *', function(){
     //console.log('Running session pull');
 	updateAll();

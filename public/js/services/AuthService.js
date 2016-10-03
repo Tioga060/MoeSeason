@@ -1,5 +1,5 @@
 // public/js/services/AuthService.js
-angular.module('AuthService', []).service('Auth',['$http','$q', function($http,$q) {
+angular.module('AuthService', []).service('Auth',['$http','$q','Comment', function($http,$q,Comment) {
 	var me = this;
 	
 	function getUser(callback) {
@@ -17,6 +17,7 @@ angular.module('AuthService', []).service('Auth',['$http','$q', function($http,$
 				  //console.log(res.data);
 				  me.currentUser["profile"] = "/player/" +me.currentUser["playerid"];
 				  me.currentUser["loggedin"] = true;
+				  Comment.setSubmitter(me.currentUser["playerid"]);
 				  callback(me.currentUser);
 			  }
 			  else{

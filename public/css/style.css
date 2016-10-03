@@ -6,3 +6,93 @@
 .help{
 	cursor:help;
 }
+
+body {
+	background-color:#343433;
+}
+.mainbody{
+	background-color:#FFDE9C;
+}
+
+.comments{
+	background-color:#FFFFFF;
+	width: 240px;
+}
+
+.commenthidebutton{
+	right: 202px;
+	position: fixed;
+	top: 50%;
+}
+
+.admin{
+	color: red;
+}
+
+p.para{
+	font-size: 12pt;
+}
+
+.affix {
+	right: 10px;
+	top: 10px;
+	position: fixed;
+}
+
+.comment {
+    font-size:9pt;
+}
+
+.darkerComment{
+	background-color:#e5e5e5;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: inherit;
+    transition: all .5s;
+}
+
+.btn-primary.btn-outline {
+    color: #428bca;
+}
+
+.commentbox{
+	overflow-y: auto;
+	
+}
+
+.scrollbar
+{
+
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.scrollbar.style-4::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	background-color: #F5F5F5;
+}
+
+.scrollbar.style-4::-webkit-scrollbar
+{
+	width: 10px;
+	background-color: #F5F5F5;
+}
+
+.scrollbar.style-4::-webkit-scrollbar-thumb
+{
+	background-color: #000000;
+	border: 2px solid #555555;
+}
+
+.verticaltext {
+    transform: rotate(-90deg);
+    transform-origin: right, top;
+    -ms-transform: rotate(-90deg);
+    -ms-transform-origin:right, top;
+    -webkit-transform: rotate(-90deg);
+    -webkit-transform-origin:right, top;
+    position: absolute; 
+}

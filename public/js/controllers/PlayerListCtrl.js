@@ -1,7 +1,8 @@
 // public/js/controllers/PlayerListCtrl.js
 
 
-angular.module('PlayerListCtrl', []).controller('PlayerListController', ['$scope','$routeParams', 'Player', function($scope, $routeParams, Player) {
+angular.module('PlayerListCtrl', []).controller('PlayerListController', ['$scope','$rootScope','$routeParams', 'Player','Comment', function($scope,$rootScope, $routeParams, Player,Comment) {
+	Comment.setTarget('playerlist', function(){$rootScope.getComments();});
 	$scope.playerSearch = '';
     Player.getAllPlayers().then(function(data){
 		var defaultMoeScore = {'totalScore': 0.0,'rank': "Unranked"};

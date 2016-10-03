@@ -1,2 +1,2 @@
 // public/js/app.js
-angular.module('sampleApp', ['ngRoute', 'ngCookies', 'appRoutes', 'MainCtrl', 'NerdCtrl', 'PlayerListCtrl', 'AuthCtrl', 'AuthService', 'NerdService', 'PlayerCtrl', 'PlayerService', 'TankFilter', 'TankService', 'TanksCtrl', 'angular-loading-bar', 'ngFileUpload', 'RulesCtrl','colorpicker.module']);
+angular.module('sampleApp', ['ngRoute', 'ngCookies', 'appRoutes', 'MainCtrl', 'NerdCtrl', 'PlayerListCtrl', 'AuthCtrl', 'AuthService', 'NerdService','CommentService', 'PlayerCtrl', 'PlayerService', 'TankFilter', 'TankService', 'TanksCtrl', 'angular-loading-bar', 'ngFileUpload', 'RulesCtrl','colorpicker.module','mgcrea.bootstrap.affix','ngNotificationsBar', 'ngSanitize', 'HomeCtrl']);

@@ -4,8 +4,8 @@
     <h1>{{player.username}}</h1>
 	<div ng-show="player.moescores" >
 		<img ng-src="sigs/signatures/{{player.playerid}}.png?x={{rand}}" alt="Description"/>
-		<h3 ng-show="currentUser.playerid == player.playerid"><button class="btn btn-default" ng-click="customize = !customize">Customize Signature</button></h3>
-		<div class="well" ng-show="customize">
+		<h3 ng-show="currentUser.playerid == player.playerid"><button class="btn btn-default" ng-click="customize = !customize">Customize Signature</button></h3><!---->
+		<div class="well text-left" ng-show="customize">
 			<form ng-app="fileUpload" name="form">
 					<button ngf-select ng-model="file" name="file"
 					ngf-pattern="'.jpg,.png'"
@@ -13,7 +13,7 @@
 					ngf-resize="{width: 468, quality:1.0}"  
 					ngf-validate="{size: {min: 10, max: '4MB'}, pattern: '.jpg,.png'}"
 					class="btn btn-default">Pick File</button>
-					<p><small>{{file.$ngfName}}</small></p>
+					<p class="para">{{file.$ngfName}}</p>
 					<button class="btn btn-default" type="submit" ng-click="submit()">Upload</button>
 			</form>
 			Pick Color: <input colorpicker="hex" type="text" ng-model="playercolor" />

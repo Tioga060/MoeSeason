@@ -11,6 +11,14 @@ angular.module('PlayerService', []).factory('Player', ['$http', '$q', function($
 			});
         },
 		
+		getPlayerName : function(playerid) {
+            return $http.get('/api/player/name/'+playerid).then(function(data){
+				//console.log("done");
+				//console.log(data.data);
+				return data.data;
+			});
+        },
+		
 		getByCookie : function(key, sig) {
             return $http.get('/api/cookie/'+key+'/'+sig).then(function(data){
 				//console.log("done");
