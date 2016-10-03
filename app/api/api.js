@@ -42,7 +42,7 @@ module.exports = function(app) {
 		
 		 // get all the bears (accessed at GET http://localhost:8080/api/bears)
 		.get(function(req, res) {
-			Player.find({},'playerid username moescores.totalScore',function(err, players) {//playerid username session_data
+			Player.find({},'playerid username moescores.totalScore moescores.rank',function(err, players) {//playerid username session_data
 				if (err)
 					res.send(err);
 				res.json(players);
@@ -79,6 +79,17 @@ module.exports = function(app) {
 			if (err)
 				res.send(err);
 			res.json(tanks);
+		});
+	});
+	
+	router.route('/sessions/:tankid')
+
+    // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
+    .get(function(req, res) {
+		Tank.findOne({'tankid': req.params.tankid},function(err, tank) {//playerid username session_data
+			if (err)
+				res.send(err);
+			res.json(tank);
 		});
 	});
 	
@@ -134,7 +145,7 @@ module.exports = function(app) {
 
     // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
     .get(function(req, res) {
-		res.json({'sessionMin':(variables.sessionMin).toString(),'sessionsRequired':(variables.sessionsRequired).toString(),'tankIDs':variables.tankIDs});
+		res.json({'sessionMin':(variables.sessionMin).toString(),'sessionsRequired':(variables.sessionsRequired).toString(),'tankIDs':variables.tankIDs, 'weights': variables.tankWeights, 'maxScore': variables.maxScore,'moecalcstring': variables.moecalcstring});
     });
 	
 	router.route('/add/clan/:server/:clantag')

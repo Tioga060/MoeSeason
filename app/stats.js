@@ -41,6 +41,37 @@ function rankPlayersForTank(playertotals, tankid){
 		if (error) {console.log(error); return}
 		res.save(function(){});
 	});
+	var returnObj = {};
+	for (var i = 0; i<totalArray.length; i++){
+		var pid = totalArray[i].playerid;
+		returnObj[pid] = i+1;
+	}
+	return returnObj;
+
+}
+
+function rankPlayers(players){
+	var totalArray = [];
+
+	function compare(a,b) {
+		if (a.totalScore < b.totalScore)
+			return 1;
+		if (a.totalScore > b.totalScore)
+			return -1;
+		return 0;
+	}
+
+	for (playerid in players){
+		totalArray.push({'playerid':playerid,'totalScore':players[playerid]['totalScore']});
+	}
+	
+	totalArray.sort(compare);
+
+	for (var i = 0; i<totalArray.length; i++){
+		var pid = totalArray[i].playerid;
+		players[pid]['rank'] = i+1;
+	}
+	return players;
 
 }
 
@@ -78,8 +109,13 @@ function calculateMoeScores(callback){
 				if(!players[playerid]["totalScore"]){players[playerid]["totalScore"] = 0;}
 				players[playerid]["totalScore"] += players[playerid]['tanks'][tankid]['total']*weights['overall_weight'];
 			}
-			rankPlayersForTank(playertotals, tankid);
+			var tankranks = rankPlayersForTank(playertotals, tankid);
+			for (playerid in playertotals){
+				players[playerid]['tanks'][tankid]['rank'] = tankranks[playerid];
+			}
 		});
+		players = rankPlayers(players);
+		
 		callback(players);
 	});
 }
@@ -138,6 +174,8 @@ function averageBestSessions(player){
 	return player.bests;
 }
 
+
+
 function averageBestSessionsForTank(player, tank){
 	
 	//(player.session_data[tank]).sort(compareByStat(variables.sessionPriority));
@@ -165,6 +203,8 @@ function averageBestSessionsForTank(player, tank){
 
 	return beststats;
 }
+
+exports.averageBestSessionsForTank = averageBestSessionsForTank;
 
 exports.getSessionStats = function(player,stats,cb){
 	//latest_stats = latest_stats;//////////////////////////////////////

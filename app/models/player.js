@@ -15,6 +15,7 @@ var playerSchema = new Schema({
   starting_stats: {type: {}, default: false},
   latest_stats: {},
   cookie: {},
+  color: {type: String, default: '#ffffff'},
   moescores: {},
   session_data: {type: {}, default: false},
   top_sessions: {type: {}, default: false},

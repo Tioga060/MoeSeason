@@ -4,6 +4,7 @@ var cron = require('node-schedule');
 var variables = require('./variables.js');
 var wgapi = require('./wgapi.js');
 var stats = require('./stats.js');
+var sigs = require('./signatures/sig.js');
 
 function addUpdatePlayer(info, cookies, cb){
 	if(info.server=="na") {info.server = "com";}
@@ -17,6 +18,52 @@ function addUpdatePlayer(info, cookies, cb){
 			if(!(res["starting_stats"])){res.setStartingStats();}
 		// do something with the document
 		return cb(null,res);
+	});
+}
+
+function getTopTank(player){
+	var ranks = [];
+	for (tank in player.moescores.tanks){
+		ranks.push({'tankid': tank, 'rank':player.moescores.tanks[tank].rank});
+	}
+	
+	var compare = function(a,b) {
+		if (a.rank > b.rank)
+			return 1;
+		if (a.rank < b.rank)
+			return -1;
+		return 0;
+	}
+	ranks.sort(compare);
+	
+	return ranks[0].tankid;
+}
+
+function updateSignatures(){
+	Player.find({'moescores': {$exists: true}},'playerid username moescores.tanks moescores.rank color',function(err, players) {//playerid username session_data
+		players.forEach(function(player){
+			var tankid = getTopTank(player);
+			player.stats = player.moescores.tanks[tankid].stats;
+			player.rank = player.moescores.tanks[tankid].rank;
+			player.overallrank = player.moescores.rank;
+			Tank.findOne({ 'tankid': tankid },'picture',function(err, tank){
+				player.tankurl = tank['picture'];
+				sigs.createSig(player);
+			});
+		});
+	});
+}
+
+exports.updateSignature = function(playerid, cb){
+	Player.findOne({'playerid': playerid},'playerid username moescores.tanks moescores.rank color',function(err, player) {
+		var tankid = getTopTank(player);
+		player.stats = player.moescores.tanks[tankid].stats;
+		player.rank = player.moescores.tanks[tankid].rank;
+		player.overallrank = player.moescores.rank;
+		Tank.findOne({ 'tankid': tankid },'picture',function(err, tank){
+			player.tankurl = tank['picture'];
+			sigs.createSig(player, cb);
+		});
 	});
 }
 
@@ -184,6 +231,23 @@ function updateMoeScores(players){
 	}
 }
 
+function debugPlayerTops(){
+	Player.find({'session_data': {$ne: false}},'playerid username session_data',function(err, players) {//playerid username session_data
+		players.forEach(function(player){
+			for (tankid in player.session_data){
+				if(player.session_data[tankid].length>=variables.sessionsRequired){
+					if(!player.top_sessions){player.top_sessions = {};}
+					player.top_sessions[tankid] = stats.averageBestSessionsForTank(player, tankid);
+					
+				}
+			}
+			Player.update({'playerid': player.playerid},{ $set: { 'top_sessions': player.top_sessions}},function (err, newdata) {
+				if (err) return handleError(err);
+			});
+		});
+	});
+}
+
 cron.scheduleJob('0 0,15,30,45 * * * *', function(){
     //console.log('Running session pull');
 	updateAll();
@@ -192,3 +256,10 @@ cron.scheduleJob('0 0,15,30,45 * * * *', function(){
 cron.scheduleJob('0 10,25,40,55 * * * *', function(){
 	rankSessions(stats.calculateMoeScores(updateMoeScores));
 });
+
+cron.scheduleJob('0 58 * * * *', function(){
+	debugPlayerTops();
+	updateSignatures();
+}); 
+
+ 

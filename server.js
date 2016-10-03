@@ -18,6 +18,9 @@ var cookieSession = require('cookie-session')
 // config files
 var db = require('./config/db');
 
+// config sigs
+
+
 // set our port
 var port = process.env.PORT || 8080; 
 
@@ -54,6 +57,9 @@ app.use(express.static(__dirname + '/public'));
 
 // routes ==================================================
 require('./app/routes')(app); // configure our routes 
+
+// uploads ==================================================
+require('./app/upload')(app); // configure our routes 
 
 // auth ====================================================
 require('./app/auth')(app); // configure our authorization

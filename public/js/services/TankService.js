@@ -11,6 +11,14 @@ angular.module('TankService', []).factory('Tank', ['$http', '$q', function($http
 			});
         },
 		
+		getTankSession : function(tankid) {
+            return $http.get('/api/sessions/'+tankid).then(function(data){
+				//console.log("got tank");
+				//console.log(data);
+				return data.data;
+			});
+        },
+		
 		getTopTanks : function() {
             return $http.get('/api/sessions').then(function(data){
 				//console.log("got tanks");

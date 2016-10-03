@@ -5,11 +5,12 @@
 	<input type="text" class="form-control" placeholder="Search Player" ng-model="playerSearch">
     <table class="table">
 		<thead>
-			<tr><th>Player</th><th>MoeScore</th></tr>
+			<tr><th>Player</th><th>Rank</th><th>MoeScore</th></tr>
 		</thead>
 		<tbody>
 			<tr class="text-left"ng:repeat="player in players" ng-hide="!player.username.toLowerCase().includes(playerSearch.toLowerCase())">
 				<td><a ng-href="/player/{{player.playerid}}">{{player.username}}</a></td>
+				<td>{{player.moescores.rank}}</td>
 				<td>{{player.moescores.totalScore | number:2}}</td>
 			</tr>
 		</tbody>

@@ -8,6 +8,8 @@
         "angular": "latest",
         "angular-route": "latest",
 		"angular-cookies": "latest",
-		"angular-loading-bar":"latest"
+		"angular-loading-bar":"latest",
+		"ng-file-upload":"latest",
+		"angular-bootstrap-colorpicker":"latest"
     }
 }

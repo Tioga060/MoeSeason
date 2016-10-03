@@ -27,7 +27,17 @@
             controller: 'PlayerListController'
         })
 		
+		.when('/rules', {
+            templateUrl: 'views/rules.html',
+            controller: 'RulesController'
+        })
+		
 		.when('/tanks', {
+            templateUrl: 'views/tanks.html',
+            controller: 'TanksController'
+        })
+		
+		.when('/tanks/:tankid', {
             templateUrl: 'views/tanks.html',
             controller: 'TanksController'
         });

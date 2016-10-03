@@ -2,6 +2,73 @@
 
 <div class="jumbotron text-center">
     <h1>{{player.username}}</h1>
+	<div ng-show="player.moescores" >
+		<img ng-src="sigs/signatures/{{player.playerid}}.png?x={{rand}}" alt="Description"/>
+		<h3 ng-show="currentUser.playerid == player.playerid"><button class="btn btn-default" ng-click="customize = !customize">Customize Signature</button></h3>
+		<div class="well" ng-show="customize">
+			<form ng-app="fileUpload" name="form">
+					<button ngf-select ng-model="file" name="file"
+					ngf-pattern="'.jpg,.png'"
+					ngf-accept="'image/*'"
+					ngf-resize="{width: 468, quality:1.0}"  
+					ngf-validate="{size: {min: 10, max: '4MB'}, pattern: '.jpg,.png'}"
+					class="btn btn-default">Pick File</button>
+					<p><small>{{file.$ngfName}}</small></p>
+					<button class="btn btn-default" type="submit" ng-click="submit()">Upload</button>
+			</form>
+			Pick Color: <input colorpicker="hex" type="text" ng-model="playercolor" />
+		</div>
+	</div>
+	
+	<div ng-show="player.moescores">
+		<h2>Tank Ranks</h2>
+		<h3>Total MoeScore: {{player.moescores.totalScore | number:2}} Rank: {{player.moescores.rank}}</h3>
+		
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th class="col-md-3">Tank</th>
+					<th class="col-md-1">Value</th>
+					
+					<th class="col-md-1">Winrate</th>
+					<th class="col-md-1">Spots/Game</th>
+					<th class="col-md-1">Kills/Game</th>
+					<th class="col-md-1">Exp/Game</th>
+					<th class="col-md-1">Dmg/Game</th>
+					<th class="col-md-1">Total MoeScore</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				<tr class="bigTR" ng-repeat-start="(tank,data) in player.moescores.tanks">
+					<td class="text-left"><img ng-src="{{tank | tankimage}}" alt="Description" /><a ng-href="/tanks/{{tank | tanknameURI}}">{{tank | tankname}}</a></td>
+					<td class="text-left">Rank</td>
+					
+					<td class="text-left" ng:repeat="(metric, info) in data.stats">{{info.rank}}</td>
+					<td class="text-left">{{data.rank}}</td>
+				</tr>
+				<tr>
+					<td class="text-left"></td>
+					<td class="text-left">MoeScores</td>
+					
+					<td class="text-left" ng:repeat="(metric, info) in data.stats"><a class="help" href="#" data-toggle="tooltip" ng-attr-title="{{rules.moecalcstring}}/Maxumum total MoeScore for Tank">{{info.moeScore | normalizeVal:rules.weights[tank]:rules.maxScore:metric}}</a></td>
+					<td class="text-left"><a href="#" data-toggle="tooltip"  class="help" title="All previous columns multiplied by their multipliers">{{data.total | number:2}}</a></td>
+				</tr>
+				<tr ng-repeat-end>
+					<td class="text-left"></td>
+					<td class="text-left">Multipliers</td>
+					
+					<td class="text-left">x{{rules.weights[tank].wr}}</td>
+					<td class="text-left">x{{rules.weights[tank].spg}}</td>
+					<td class="text-left">x{{rules.weights[tank].kpg}}</td>
+					<td class="text-left">x{{rules.weights[tank].epg}}</td>
+					<td class="text-left">x{{rules.weights[tank].dpg}}</td>
+					<td class="text-left"><a href="#" data-toggle="tooltip"  class="help" title="Total Tank MoeScore will be multiplied by this value when added to your overall MoeScore">x{{rules.weights[tank].overall_weight}}</a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 	
 	<h2>Latest Stats</h2>
 	
@@ -29,6 +96,7 @@
 		</tbody>
 	</table>
 	
+	<div ng-show="player.session_data">
 	<h2>Sessions in Tanks</h2>
 	
 	<div ng-show="!(player.session_data).length" ng:repeat="(tank,stats) in player.session_data">
@@ -58,30 +126,8 @@
 			</tbody>
 		</table>
 	</div>
-	
-	
-	
-	<h2>Tank Ranks</h2>
-	<h3>Total MoeScore: {{player.moescores.totalScore | number:2}}</h3>
-	<div ng:repeat="(tank,data) in player.moescores.tanks">
-		<h3 class="text-left"><img ng-src="{{tank | tankimage}}" alt="Description" />{{tank | tankname}}</h3>
-		<h4 class="text-left">Score: {{data.total | number:2}}</h4>
-		<table class="table">
-			<thead>
-				<tr>
-					<th class="col-md-1">Metric</th>
-					<th class="col-md-1">Rank</th>
-					<th class="col-md-2">Resulting Score</th>
-				</tr>
-			</thead>
-
-			<tbody>
-				<tr class="text-left" ng:repeat="(metric, info) in data.stats" ng-class="{success: session.isTop}">
-					<td>{{metric | metric}}</td>
-					<td>{{info.rank}}</td>
-					<td>{{info.moeScore | number:0}}</td>
-				</tr>
-			</tbody>
-		</table>
 	</div>
+	
+	
+	
 </div>

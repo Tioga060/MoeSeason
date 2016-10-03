@@ -5,10 +5,12 @@ angular.module('TanksCtrl', []).controller('TanksController', ['$scope','$routeP
 	
 	Auth.getUser(function(user){$scope.currentUser = user;});
 	$scope.tankSearch = '';
+	if($routeParams.tankid){$scope.tankSearch = $routeParams.tankid.replace('*', '/');;}
 	$scope.playerSearch = '';
 	$scope.hideTank = {};
+	$scope.tanks = [];
 	$scope.loading = true;
-    Tank.getTopTanks().then(function(data){
+    /*Tank.getTopTanks().then(function(data){
 		data.forEach(function(tank){
 			var tname = tank.name;
 			tank.sort = "moerank";
@@ -27,15 +29,40 @@ angular.module('TanksCtrl', []).controller('TanksController', ['$scope','$routeP
 					tank.rankList.push(rankName);
 				}
 			}
+			
 		});
-		$scope.tanks = data;
+		//$scope.tanks = data;
 		console.log(data);
 		$scope.loading = false;
-    });
+    });*/
 	Tank.getRules().then(function(data){
 		$scope.rules = data;
-		//console.log("got these rules");
-		//console.log(data);
+		for (tankid in data.weights){
+			console.log("tankid " +tankid);
+			Tank.getTankSession(tankid).then(function(tank){
+				if(tank && tank.sessions){
+					var tname = tank.name;
+					tank.sort = "moerank";
+					tank.rankList = [];
+					tank.rankList.push("moerank");
+					tank.rankList.push("epg");
+					tank.ranks['moerank'] = [];
+					for(var i = 0; i<tank.moerank.length; i++){
+						var playerid = tank.moerank[i]['playerid'];
+						tank.sessions[playerid]['moerank'] = tank.moerank[i]['total'];
+						tank['moerank'][i] = tank.sessions[playerid];
+						tank.ranks['moerank'].push(playerid);
+					}
+					for(rankName in tank.ranks){
+						if(rankName!="moerank"&&rankName!="epg"){
+							tank.rankList.push(rankName);
+						}
+					}
+					$scope.tanks.push(tank);
+				}
+			});
+		}
+		
     });
 	
 	$scope.setHide = function(tankname, username){

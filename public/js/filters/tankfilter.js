@@ -25,6 +25,31 @@ angular.module('TankFilter', [])
 	  return getTankName;
 }])
 
+.filter('tanknameURI', ['Tank', '$q', function(Tank, $q) {
+	var data = {}; // DATA RECEIVED ASYNCHRONOUSLY AND CACHED HERE
+    var serviceInvoked = {};
+	
+    function realFilter(tankname) { // REAL FILTER LOGIC
+        return encodeURIComponent(tankname.replace('/', '*'));
+    }
+	  function getTankName(tankid) {
+			if( !(tankid in data) ) {
+				if( !(tankid in serviceInvoked) ) {
+					serviceInvoked[tankid] = true;
+					// CALL THE SERVICE THAT FETCHES THE DATA HERE
+					Tank.getTank(tankid).then(function(result) {
+						var name = result['name'];
+						data[tankid] = name;//${name}
+					});
+				}
+				return "Loading"; // PLACEHOLDER WHILE LOADING, COULD BE EMPTY
+			}
+			else return realFilter(data[tankid]);
+	  }
+	  getTankName.$stateful = true;
+	  return getTankName;
+}])
+
 .filter('sessionnumber', function() {
 	
 	  return function addOne(sessionNumber) {
@@ -66,6 +91,26 @@ angular.module('TankFilter', [])
 		  };
 		  
 		return (conversions[metric](val) || val);
+	  }
+
+})
+
+.filter('normalizeVal', function($filter) {
+		var numberFilter = $filter('number');
+	  return function convert(val,weights,max,metric) {
+		  
+		  /*console.log("value");
+		  console.log(val);
+		  console.log("max");
+		  console.log(max);*/
+		  console.log();
+		  var totalMax = 0;
+		  for (weight in weights){
+			  if(weight !="overall_weight"){
+			  totalMax += max*weights[weight];}
+		  }
+		  var norm = (val/totalMax);
+		return numberFilter(norm/weights[metric]*100,2);
 	  }
 
 })

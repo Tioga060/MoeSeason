@@ -1,0 +1,8 @@
+.bigTR {
+  border-bottom: 2px solid #ddd;
+   border-top: 4px solid #ddd;
+}
+
+.help{
+	cursor:help;
+}

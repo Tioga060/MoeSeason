@@ -1,10 +1,10 @@
 // public/js/controllers/PlayerListCtrl.js
 
 
-angular.module('PlayerListCtrl', []).controller('PlayerListController', ['$scope','$routeParams', 'Player', function($scope, $routeParams, Player, Auth) {
+angular.module('PlayerListCtrl', []).controller('PlayerListController', ['$scope','$routeParams', 'Player', function($scope, $routeParams, Player) {
 	$scope.playerSearch = '';
     Player.getAllPlayers().then(function(data){
-		var defaultMoeScore = {'totalScore': 0.0};
+		var defaultMoeScore = {'totalScore': 0.0,'rank': "Unranked"};
 		function compare(a,b) {
 			if (a.moescores.totalScore < b.moescores.totalScore)
 				return 1;

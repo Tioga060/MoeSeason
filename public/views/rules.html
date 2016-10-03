@@ -1,0 +1,67 @@
+<!-- public/views/nerd.html -->
+
+<div class="jumbotron text-center">
+    <h1>Rules</h1>
+	<div class='container text-left'>
+	
+	<h2>Sessions</h2>
+	<ul>
+		<li>At Least {{rules.sessionMin}} games per session</li>
+		<li>{{rules.sessionsRequired}} sessions in a tank required for rank</li>
+		<li>Sessions are pulled every 15 minutes, so it is possible to get more than the minimum games compiled into a session</li>
+		<li>Sessions do not necessarily mean 1 sitting, they are ~{{rules.sessionMin}} games over any time frame pulled after the {{rules.sessionMin}}th is played</li>
+		<li>Your best {{rules.sessionsRequired}} sessions by exp/game are averaged together when your rank is calculated</li>
+		<li>Games per session and sessions required for rank are tuned in order to reduce the likelihood that a bad player will win a tank because of a lucky unbeatable session</li>
+	</ul>
+	
+	<h2>MoeScores</h2>
+	<ul>
+		<li>Individual MoeScores are calculated using your rank in a given category: {{rules.moecalcstring}}</li>
+		<li>These scores are then divided by the maximum total score possible in a tank by achieving rank 1 in every category to normalize the total score between 0 and 100</li>
+		<li>Finally, they are multiplied by their respective multipliers below and added to each other to create the total score for a tank</li>
+		<li>Total tank moescores are then multiplied by the tank's overall multiplier before added to your overall score</li>
+		<li>This way, more competitive tanks will give you a higher score, so the person in first place isn't just someone who gets first place on all of the hipster tanks</li>
+		<li>The MoeScore calculation function is designed to reward higher ranks by using an exponential scale instead of a linear scale, so you get much more points for being in first than second, and so on</li>
+		<li>Multipliers will typically be tuned in a way that makes sense for the tank. Heavy tanks will have less emphasis on spots/game, for example, and artillery will have a higher emphasis on damage and kills</li>
+		<li>Moescores are calculated every 15 minutes</li>
+	</ul>
+	<h2>Signatures</h2>
+	<img src="/sigs/example.png">
+	<ul>
+		<li>Signatures will pick one of your highest rank tanks and will display each individual ranking, along with your overall site rank</li>
+		<li>Left column, top to bottom: damage per game rank, spots per game rank, kills per game rank</li>
+		<li>Right column, top to bottom: experience per game rank, winrate rank, overall tank rank</li>
+		<li>Signatures are updated once an hour</li>
+	</ul>
+	<h2>Note</h2>
+	<p>All rules are flexible and open to input, if you have complaints or ideas, please let me know</p>
+	</div>
+	<h2>Tank Multipliers This Season</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th class="col-md-3">Tank</th>
+				<th class="col-md-1">Winrate</th>
+				<th class="col-md-1">Spots/Game</th>
+				<th class="col-md-1">Kills/Game</th>
+				<th class="col-md-1">Exp/Game</th>
+				<th class="col-md-1">Dmg/Game</th>
+				<th class="col-md-1">Total MoeScore</th>
+			</tr>
+		</thead>
+
+		<tbody>
+			<tr  ng-repeat="(tank,weight) in rules.weights">
+				<td class="text-left"><img ng-src="{{tank | tankimage}}" alt="Description" />{{tank | tankname}}</td>
+				<td class="text-left">x{{weight.wr}}</td>
+				<td class="text-left">x{{weight.spg}}</td>
+				<td class="text-left">x{{weight.kpg}}</td>
+				<td class="text-left">x{{weight.epg}}</td>
+				<td class="text-left">x{{weight.dpg}}</td>
+				<td class="text-left"><a href="#" data-toggle="tooltip"  class="help" title="Total Tank MoeScore will be multiplied by this value when added to your overall MoeScore">x{{weight.overall_weight}}</a></td>
+			</tr>
+		</tbody>
+	</table>
+	</div>
+	
+</div>

@@ -1,9 +1,12 @@
 // public/js/controllers/PlayerCtrl.js
 
 
-angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$routeParams', 'Player','Auth','Tank', function($scope, $routeParams, Player, Auth, Tank) {
+angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$routeParams','Upload','$q', 'Player','Auth','Tank', function($scope, $routeParams, Upload, $q, Player, Auth, Tank) {
 	
 	Auth.getUser(function(user){$scope.currentUser = user;});
+	$scope.customize = false;
+	$scope.rand = Math.random();
+	$scope.playercolor = '#ffffff';
 	if($scope.currentUser){if($scope.currentUser["playerid"] == $routeParams.playerid) {$scope.sessionbutton = true;} else {$scope.sessionbutton = false;}}
 	
     Player.get($routeParams.playerid).then(function(data){
@@ -15,7 +18,7 @@ angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$rout
 		////console.log(sessionData);
 		Tank.getRules().then(function(rules){
 			$scope.rules = rules;
-			
+			console.log(rules.moecalcstring);
 			for(tank in data.session_data){
 				for (var i = 0; i < data.session_data[tank].length; i++)
 				{
@@ -45,4 +48,41 @@ angular.module('PlayerCtrl', []).controller('PlayerController', ['$scope','$rout
 			Player.update($scope.currentUser["playerid"]);
 		}
 	};
+	
+	$scope.submit = function() {
+      if ($scope.form.file.$valid && $scope.file) {
+		  console.log($scope.file);
+		$scope.upload($scope.file);
+      }
+    };
+
+	// upload on file select or drop
+    $scope.upload = function (file) {
+        Upload.upload({
+            url: '/upload',
+            data: {file: file, 'playerid': $scope.currentUser.playerid, 'playercolor':$scope.playercolor}
+        }).then(function (resp) {
+            console.log('Success ' + resp.config.data.file.name + 'uploaded. Response: ' + resp.data);
+			$scope.rand = Math.random();
+        }, function (resp) {
+            console.log('Error status: ' + resp.status +": "+ resp.data);
+        }, function (evt) {
+            var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+            console.log('progress: ' + progressPercentage + '% ' + evt.config.data.file.name);
+        }
+		
+		);
+    };
+	
+	$scope.$watch('rand',function(){
+		//console.log("rules changed");
+	});
+	$scope.$watch('file',function(){
+		//console.log("rules changed");
+	});
+	$scope.$watch('playercolor',function(){
+		//console.log($scope.playercolor);
+	});
+	
+	
 }]);
